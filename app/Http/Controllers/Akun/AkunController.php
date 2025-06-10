@@ -65,30 +65,31 @@ class AkunController extends Controller
         return redirect()->route('akun.data_akun')->with('Berhasil', 'Akun pengguna berhasil tersimpan');
     }
     public function edit(Request $request, $id)
-{
-    $user = User::findOrFail($id);
+    {
+        $user = User::findOrFail($id);
 
-    $rules = [
-        'nama_pengguna' => 'required|string|max:100',
-        'username' => 'required|string|min:5|max:20|unique:pengguna,username,' . $id . ',id_pengguna',
-        'no_kontak' => 'nullable|string|max:15',
-        'role_id' => 'required|exists:roles,id',
-        'kecamatan_id' => 'nullable|integer|exists:kecamatan,id_kecamatan',
-    ];
+        $rules = [
+            'nama_pengguna' => 'required|string|max:100',
+            'username' => 'required|string|max:100|unique:pengguna,username,' . $id . ',id_pengguna',
+            'no_kontak' => 'nullable|string|max:15',
+            'role_id' => 'required|exists:roles,id',
+            'kecamatan_id' => 'nullable|integer|exists:kecamatan,id_kecamatan',
+        ];
 
-    $validatedData = $request->validate($rules);
+        $validatedData = $request->validate($rules);
 
-    $user->update([
-        'role_id' => $validatedData['role_id'],
-        'nama_pengguna' => $validatedData['nama_pengguna'],
-        'username' => $validatedData['username'],
-        'no_kontak' => $validatedData['no_kontak'] ?? null,
-        'kecamatan_id' => $validatedData['kecamatan_id'],
-        'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
-    ]);
+        $user->update([
+            'role_id' => $validatedData['role_id'],
+            'nama_pengguna' => $validatedData['nama_pengguna'],
+            'username' => $validatedData['username'],
+            'no_kontak' => $validatedData['no_kontak'] ?? null,
+            'kecamatan_id' => $validatedData['kecamatan_id'] ?? null,
+            'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
+            'auth_type' => $user->auth_type, // <- ini ditambahkan agar tidak berubah
+        ]);
 
-    return redirect()->route('akun.data_akun')->with('success', 'Akun berhasil diperbarui.');
-}
+        return redirect()->route('akun.data_akun')->with('success', 'Akun berhasil diperbarui.');
+    }
 
     public function hapus($id)
     {

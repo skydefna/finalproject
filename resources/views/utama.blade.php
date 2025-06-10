@@ -39,7 +39,7 @@
     <div class="container-fluid d-flex justify-content-between align-items-center">
 
       <div class="d-flex align-items-center" style="width: 33%; padding-left: 30px;" >
-        <a href="{{ route('teknisi.beranda') }}">
+        <a href="{{ route('beranda') }}">
           <h1 class="sitename">Lain Mata</h1>
         </a>
       </div>

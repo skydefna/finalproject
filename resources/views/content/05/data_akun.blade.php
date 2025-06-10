@@ -244,7 +244,7 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="form-group" id="kecamatan-wrapper">
+                                                <div class="form-group" id="kecamatan-wrapper" style="display: none;">
                                                     <label for="kecamatan_id">Kecamatan</label>
                                                         <select name="kecamatan_id" id="kecamatan_id" class="form-control">
                                                             @foreach ($kecamatan as $kec)
@@ -329,30 +329,49 @@
                 });
 
                 document.addEventListener('DOMContentLoaded', function () {
-                    const modal = document.getElementById('editModal{{ $db->id_pengguna }}');
-                    const roleSelect = modal.querySelector('[name="role_id"]');
-                    const kecamatanWrapper = modal.querySelector('#kecamatan-wrapper');
-                    const kecamatanSelect = modal.querySelector('[name="kecamatan_id"]');
+                    const modals = document.querySelectorAll('[id^="editModal"]'); // Ambil semua modal edit
 
-                    function toggleKecamatan() {
-                        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
-                        const selectedRoleName = selectedOption.dataset.rolename;
+                    modals.forEach(modal => {
+                        const roleSelect = modal.querySelector('[name="role_id"]');
+                        const kecamatanWrapper = modal.querySelector('#kecamatan-wrapper');
+                        const kecamatanSelect = modal.querySelector('[name="kecamatan_id"]');
+                        const nomorKontakInput = modal.querySelector('[name="nomor_kontak"]');
 
-                        if (selectedRoleName === 'admin') {
-                            kecamatanWrapper.style.display = 'flex';
-                            kecamatanSelect.setAttribute('required', 'required');
-                        } else {
-                            kecamatanWrapper.style.display = 'none';
-                            kecamatanSelect.removeAttribute('required');
-                            kecamatanSelect.value = '';
+                        function toggleKecamatanField() {
+                            const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+                            const selectedRoleName = selectedOption.dataset.rolename;
+
+                            console.log('Selected Role Name:', selectedRoleName); // debug output
+
+                            if (selectedRoleName === 'admin') {
+                                kecamatanWrapper.style.display = 'flex';
+                                kecamatanSelect.setAttribute('required', 'required');
+
+                                if (kecamatanSelect.value === '-') {
+                                    kecamatanSelect.value = '';
+                                }
+
+                                if (nomorKontakInput && nomorKontakInput.value === '-') {
+                                    nomorKontakInput.value = '';
+                                }
+                            } else {
+                                kecamatanWrapper.style.display = 'none';
+                                kecamatanSelect.removeAttribute('required');
+                                kecamatanSelect.value = '-';
+
+                                if (nomorKontakInput && nomorKontakInput.value.trim() === '') {
+                                    nomorKontakInput.value = '-';
+                                }
+                            }
                         }
-                    }
 
-                    roleSelect.addEventListener('change', toggleKecamatan);
+                        // Event saat ganti role
+                        roleSelect.addEventListener('change', toggleKecamatanField);
 
-                    // Jalankan saat modal terbuka
-                    $(modal).on('shown.bs.modal', function () {
-                        toggleKecamatan();
+                        // Event saat modal ditampilkan
+                        $(modal).on('shown.bs.modal', function () {
+                            toggleKecamatanField();
+                        });
                     });
                 });
             </script>

@@ -42,9 +42,12 @@ class UtamaController extends Controller
             ->get();
 
         $rekapPerKecamatan = DB::table('pengajuan as p')
+            ->join('pengajuan_status as ps', 'p.id_pengajuan', '=', 'ps.pengajuan_id')
             ->join('pengajuan_lokasi as pl', 'p.id_pengajuan', '=', 'pl.pengajuan_id')
             ->join('lokasi as l', 'pl.lokasi_id', '=', 'l.id_lokasi')
             ->join('kecamatan as k', 'p.kecamatan_id', '=', 'k.id_kecamatan')
+            ->where('ps.status_id', 2)
+            ->where('ps.is_active', true)
             ->select('k.nama_kecamatan', DB::raw('COUNT(DISTINCT l.id_lokasi) as total_wifi'))
             ->groupBy('k.nama_kecamatan')
             ->get();
@@ -72,9 +75,12 @@ class UtamaController extends Controller
             ->count();
         
         $rekapPerDesa = DB::table('pengajuan as p')
+            ->join('pengajuan_status as ps', 'p.id_pengajuan', '=', 'ps.pengajuan_id')
             ->join('pengajuan_lokasi as pl', 'p.id_pengajuan', '=', 'pl.pengajuan_id')
             ->join('lokasi as l', 'pl.lokasi_id', '=', 'l.id_lokasi')
             ->join('desa_kelurahan as d', 'p.desa_kelurahan_id', '=', 'd.id_desa_kelurahan')
+            ->where('ps.status_id', 2)
+            ->where('ps.is_active', true)
             ->select('d.nama_desa_kelurahan', DB::raw('COUNT(DISTINCT l.id_lokasi) as total_wifi'))
             ->groupBy('d.nama_desa_kelurahan')
             ->get();
