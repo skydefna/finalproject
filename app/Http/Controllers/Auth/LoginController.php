@@ -27,9 +27,9 @@ class LoginController
         ];
 
         $credentials = $request->validate([
-            'login' => 'required',
-            'password' => 'required|min:6',
-            'g-recaptcha-response' => 'required',
+            'login' => 'required|string|max:100',
+            'password' => 'required|min:6|max:100',
+            'g-recaptcha-response' => 'required|string',
         ], $messages);
 
         // Verifikasi CAPTCHA manual ke Google
@@ -57,29 +57,29 @@ class LoginController
         }
 
         if (Auth::attempt([$fieldType => $credentials['login'], 'password' => $credentials['password']])) {
-        // Hapus semua sesi lain user ini (single session login)
-        DB::table('sessions')->where('user_id', $pengguna->id)->delete();
-        // Regenerasi session baru untuk user yang baru login
-        $request->session()->regenerate();
+            // Hapus semua sesi lain user ini (single session login)
+            DB::table('sessions')->where('user_id', $pengguna->id)->delete();
+            // Regenerasi session baru untuk user yang baru login
+            $request->session()->regenerate();
 
-        $roles = Auth::user();
+            $roles = Auth::user();
 
-        switch ($roles->role->nama) {
-            case 'admin':
-                return redirect()->intended('/utama');
-            case 'tamu':
-                return redirect()->intended('/beranda');
-            case 'teknisi':
-                return redirect()->intended('/home');
-            case 'pimpinan':
-                return redirect()->intended('/dashboard');
-            case 'super admin':
-                return redirect()->intended('/menu/tabel');
-            default:
-                Auth::logout();
-                return back()->with('loginError', 'Role tidak dikenali.');
+            switch ($roles->role->nama) {
+                case 'admin':
+                    return redirect()->intended('/utama');
+                case 'tamu':
+                    return redirect()->intended('/beranda');
+                case 'teknisi':
+                    return redirect()->intended('/home');
+                case 'pimpinan':
+                    return redirect()->intended('/dashboard');
+                case 'super admin':
+                    return redirect()->intended('/menu/tabel');
+                default:
+                    Auth::logout();
+                    return back()->with('loginError', 'Role tidak dikenali.');
+            }
         }
-    }
 
         return back()->with('loginError', 'Akun anda tidak terdaftar');
     }
