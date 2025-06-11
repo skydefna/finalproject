@@ -27,7 +27,7 @@
 @section('content')
 <div class="content mt-3">
     @csrf
-    <div class="card-body table-responsive">
+    <div class="card-body">
         <div class="row mb-2">
             <div class="col-md-4">
                 <label for="filter-status" class="form-label">Filter Status:</label>
@@ -49,78 +49,80 @@
                 </div>
             </div>
         </div>
-        <table id="data-pengajuan" class="table table-bordered">
-            <thead>
-                <tr style="text-align:center;">
-                    <th>No</th>
-                    <th>Nama PIC Lokasi</th>
-                    <th>Pengusul</th>
-                    <th>Nama Lokasi</th>
-                    <th>Kecamatan</th>
-                    <th>Desa / Kelurahan</th>
-                    <th>Kategori</th>
-                    <th>Kontak PIC</th>                          
-                    <th>Status</th>                        
-                    <th>Status Aktif</th>        
-                    <th class="d-none">Status Aktif Value</th>                
-                    <th>Aksi</th>
-                    <th class="d-none">Status Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($pengajuan as $id=>$db)
-                    <tr>
-                        <td style="vertical-align: middle">{{ $id+1 }}</td>
-                        <td class="align-middle">{{ $db->nama_pic_lokasi }}</td>
-                        <td class="align-middle text-center">{{ $db->pengusul }}</td>
-                        <td style="vertical-align: middle">
-                            @foreach ($db->lokasi as $lok)
-                                {{ $lok->nama_lokasi }}<br>
-                            @endforeach
-                        </td>
-                        <td style="vertical-align: middle">{{ $db->kecamatan->nama_kecamatan }}</td>
-                        <td style="vertical-align: middle">{{ $db->desakelurahan->nama_desa_kelurahan }}</td>
-                        <td style="vertical-align: middle">{{ $db->Kategori->nama_kategori }}</td>
-                        <td style="vertical-align: middle">{{ $db->kontak_pic_lokasi }}</td>
-                        <td style="text-align:center; vertical-align: middle;">
-                            @php
-                                $latestStatus = $db->status->last();
-                                $class = match(strtolower($latestStatus->nama_status)) {
-                                    'diajukan' => 'badge bg-warning text-white',
-                                    'disetujui' => 'badge bg-success',
-                                    'ditolak' => 'badge bg-danger',
-                                    default => 'badge bg-secondary',
-                                };
-                            @endphp
-
-                            @if ($latestStatus)
-                                <span class="{{ $class }}">{{ $latestStatus->nama_status }}</span>
-                            @endif
-                        </td>
-                        <td style="text-align:center; vertical-align: middle;">
-                            @if($db->status_on == 1)
-                                Aktif
-                            @else
-                                Mati
-                            @endif
-                        </td>
-                        <td style="display: none;">
-                            {{ $db->status_on }}
-                        </td>
-                        <td style="vertical-align: middle; text-align: center;">
-                            <div style="display: flex; justify-content: center; gap: 5px;">
-                                <button class="btn btn-info rounded btn-sm" data-bs-toggle="modal" data-bs-target="#modalReview{{ $db->id_pengajuan }}">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td style="display: none;">
-                            {{ optional($db->status->last())->nama_status }}
-                        </td>
+        <div class="table-responsive">
+            <table id="data-pengajuan" class="table table-bordered">
+                <thead>
+                    <tr style="text-align:center;">
+                        <th>No</th>
+                        <th>Nama PIC Lokasi</th>
+                        <th>Pengusul</th>
+                        <th>Nama Lokasi</th>
+                        <th>Kecamatan</th>
+                        <th>Desa / Kelurahan</th>
+                        <th>Kategori</th>
+                        <th>Kontak PIC</th>                          
+                        <th>Status</th>                        
+                        <th>Status Aktif</th>        
+                        <th class="d-none">Status Aktif Value</th>                
+                        <th>Aksi</th>
+                        <th class="d-none">Status Value</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($pengajuan as $id=>$db)
+                        <tr>
+                            <td style="vertical-align: middle">{{ $id+1 }}</td>
+                            <td class="align-middle">{{ $db->nama_pic_lokasi }}</td>
+                            <td class="align-middle text-center">{{ $db->pengusul }}</td>
+                            <td style="vertical-align: middle">
+                                @foreach ($db->lokasi as $lok)
+                                    {{ $lok->nama_lokasi }}<br>
+                                @endforeach
+                            </td>
+                            <td style="vertical-align: middle">{{ $db->kecamatan->nama_kecamatan }}</td>
+                            <td style="vertical-align: middle">{{ $db->desakelurahan->nama_desa_kelurahan }}</td>
+                            <td style="vertical-align: middle">{{ $db->Kategori->nama_kategori }}</td>
+                            <td style="vertical-align: middle">{{ $db->kontak_pic_lokasi }}</td>
+                            <td style="text-align:center; vertical-align: middle;">
+                                @php
+                                    $latestStatus = $db->status->last();
+                                    $class = match(strtolower($latestStatus->nama_status)) {
+                                        'diajukan' => 'badge bg-warning text-white',
+                                        'disetujui' => 'badge bg-success',
+                                        'ditolak' => 'badge bg-danger',
+                                        default => 'badge bg-secondary',
+                                    };
+                                @endphp
+
+                                @if ($latestStatus)
+                                    <span class="{{ $class }}">{{ $latestStatus->nama_status }}</span>
+                                @endif
+                            </td>
+                            <td style="text-align:center; vertical-align: middle;">
+                                @if($db->status_on == 1)
+                                    Aktif
+                                @else
+                                    Mati
+                                @endif
+                            </td>
+                            <td style="display: none;">
+                                {{ $db->status_on }}
+                            </td>
+                            <td style="vertical-align: middle; text-align: center;">
+                                <div style="display: flex; justify-content: center; gap: 5px;">
+                                    <button class="btn btn-info rounded btn-sm" data-bs-toggle="modal" data-bs-target="#modalReview{{ $db->id_pengajuan }}">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td style="display: none;">
+                                {{ optional($db->status->last())->nama_status }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
