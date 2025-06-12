@@ -197,7 +197,7 @@
           <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="200">
               <h3>Lokasi Data Pengajuan</h3>
               <p class="fst-italic">
-                  Berikut adalah tampilan lokasi dari seluruh data pengajuan yang telah dimasukkan.
+                  Berikut adalah tampilan lokasi dari seluruh data pemasangan Lain Mata.
               </p>
 
               <div class="mb-3">
