@@ -131,16 +131,13 @@
 								<div class="form-group mb-3 text-center">
 									<button type="submit" class="btn btn-warning text-white" style="width: 250px;">Masuk</button>
 								</div>
-							</form>
 
-							<div class="form-group mb-3 text-center">
-								<p class="text-center mt-3">
-									Belum punya akun? Klik Tombol dibawah ini</a>
-								</p>
-								<a href="{{ url('auth/google') }}" class="btn btn-danger btn-block" style="background-color: #db4437; color: white;">
-									<i class="fa fa-google mr-2"></i> Daftar dengan Google
-								</a>
-							</div>
+								<div class="form-group mb-3 text-center">
+									<p class="text-center mt-3">
+										Belum punya akun? <a href="{{ url('auth/google') }}" style="color: orange;">Daftar Disini</a>
+									</p>
+								</div>
+							</form>
 						</div> <!-- end form col -->
 
 					</div> <!-- end row -->
