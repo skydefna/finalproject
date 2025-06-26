@@ -19,7 +19,10 @@ class ResetPasswordController
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
+            'password' => 'required|min:8',
+        ],[
+            'password.required' => 'Kata sandi wajib diisi',
+            'password.min' => 'Kata sandi minimal 8 karakter',
         ]);
 
         $status = Password::reset(

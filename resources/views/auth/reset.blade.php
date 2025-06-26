@@ -87,12 +87,10 @@
 
 							<div class="form-group">
 								<label>Password Baru</label>
-								<input type="password" name="password" class="form-control" required>
-							</div>
-
-							<div class="form-group">
-								<label>Konfirmasi Password</label>
-								<input type="password" name="password_confirmation" class="form-control" required>
+								<input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
+								@error('password')
+										<div class="invalid-feedback">{{ $message }}</div>
+								@enderror
 							</div>
 
 							<button type="submit" class="btn btn-success mt-2">Ubah Password</button>

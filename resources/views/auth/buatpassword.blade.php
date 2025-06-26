@@ -102,10 +102,19 @@
                   </div>
 
                   <div class="form-group mb-3">
-                    <label for="password" class="label">Password</label>
-                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
-                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-					          <small class="form-text text-muted">Gunakan kombinasi huruf besar, angka, dan simbol. Misal: Abcd@123</small>
+                      <label for="password" class="label">Password</label>
+                      <div class="input-group">
+                          <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
+                          <div class="input-group-append">
+                              <button type="button" class="input-group-text" onclick="togglePassword()" style="cursor: pointer;" aria-label="Tampilkan password">
+                                  <i id="toggleIcon" class="fas fa-eye"></i>
+                              </button>
+                          </div>
+                      </div>
+                      @error('password')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                      @enderror
+                      <small class="form-text text-muted">Gunakan kombinasi huruf besar, angka, dan simbol. Misal: Abcd@123</small>
                   </div>
 
                   <div class="form-group mb-4">

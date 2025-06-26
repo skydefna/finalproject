@@ -7,7 +7,7 @@
 
 	<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('khusus/image/komdigi.png') }}">
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	<link rel="stylesheet" href="{{ asset('login/css/style.css') }}">
 	{!! NoCaptcha::renderJs() !!}
 
@@ -83,31 +83,24 @@
 
 							<form action="{{ route('login.submit') }}" method="post" class="signin-form">
 								@csrf
-
-								@if(session()->has('success'))
-									<div class="alert alert-success alert-dismissible fade show" role="alert">
-										{{ session('success') }}
-										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-									</div>
-								@endif
-
-								@if(session()->has('loginError'))
-									<div class="alert alert-danger alert-dismissible fade show" role="alert">
-										{{ session('loginError') }}
-									</div>
-								@endif
-
 								<div class="form-group mb-3">
-									<label class="label">Username atau Email</label>
-									<input type="text" name="login" class="form-control @error('login') is-invalid @enderror" placeholder="login" autofocus value="{{ old('login') }}">
+									<label class="label">Email</label>
+									<input type="text" name="login" class="form-control @error('login') is-invalid @enderror" placeholder="Akun Google Email anda..." autofocus value="{{ old('login') }}">
 									@error('login')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
 								</div>
-
+								
 								<div class="form-group mb-3">
-									<label class="label">Password</label>
-									<input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password">
+									<label for="password" class="label">Kata Sandi</label>
+									<div class="input-group">
+										<input type="password" id="password" name="passworda" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda..." aria-label="Kata sandi">
+										<div class="input-group-append">
+											<button type="button" class="input-group-text" onclick="togglePassword()" style="cursor: pointer;" aria-label="Tampilkan kata sandi">
+												<i id="toggleIcon" class="fas fa-eye"></i>
+											</button>
+										</div>
+									</div>
 									@error('password')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
@@ -145,6 +138,23 @@
 			</div>
 		</div>
 	</section>
+
+	<script>
+		function togglePassword() {
+			const passwordInput = document.getElementById("password");
+			const toggleIcon = document.getElementById("toggleIcon");
+
+			if (passwordInput.type === "password") {
+				passwordInput.type = "text";
+				toggleIcon.classList.remove("fa-eye");
+				toggleIcon.classList.add("fa-eye-slash");
+			} else {
+				passwordInput.type = "password";
+				toggleIcon.classList.remove("fa-eye-slash");
+				toggleIcon.classList.add("fa-eye");
+			}
+		}
+	</script>
 
 	<script src="{{ asset('login/js/jquery.min.js') }}"></script>
 	<script src="{{ asset('login/js/popper.js') }}"></script>
