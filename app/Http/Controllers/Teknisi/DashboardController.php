@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Teknisi;
 
-use App\Models\Pemasangan;
 use App\Models\User;
 use App\Models\Lokasi;
 use App\Models\Status;
+use App\Models\DataAduan;
 use App\Models\Kecamatan;
 use App\Models\Pengajuan;
+use App\Models\DataSurvei;
+use App\Models\Pemasangan;
+use App\Models\StatusAduan;
 use Illuminate\Http\Request;
 use App\Models\DesaKelurahan;
 use App\Models\KategoriUsulan;
@@ -216,9 +219,28 @@ class DashboardController
     public function teknisi()
     {
         $pemasangan = Pemasangan::with(['pengajuan', 'provider', 'lokasi'])->get();
-        $pengajuan = DB::table('pengajuan')->get();
+        $pengajuan = Pengajuan::whereHas('status', function ($query) {
+            $query->where('nama_status', 'Disetujui');
+        })->with('status')->get();
         $provider = DB::table('provider')->get();
         $lokasi = DB::table('lokasi')->get();
         return view('content.04.data_teknisi' , compact('pemasangan', 'pengajuan', 'provider', 'lokasi'));
+    }
+    public function survei()
+    {
+        return view('content.04.data_survei', [
+            'survei' => DataSurvei::with(['pengajuan.status', 'lokasi'])
+                ->whereHas('pengajuan.status', function ($query) {
+                    $query->where('nama_status', 'Diajukan');
+                })
+                ->get(),
+            'status' => Status::all(),
+            'lokasi' => Lokasi::all(),        
+            'pengajuanList' => Pengajuan::with(['lokasi', 'status', 'desaKelurahan', 'kecamatan', 'kategori'])
+                ->whereHas('status', function ($query) {
+                    $query->where('nama_status', 'Diajukan');
+                })
+                ->get(),
+        ]);
     }
 }

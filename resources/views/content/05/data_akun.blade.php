@@ -181,29 +181,43 @@
                 @endforeach
             </div>
             <div class="card-body" style="overflow-x: auto;">
+                <div class="mb-3 d-flex justify-content-end">
+                    <label class="mr-2 mt-1">Filter Role:</label>
+                    <select id="filterRole" class="form-control w-auto">
+                        <option value="">Semua</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ strtolower($role->nama) }}">{{ ucfirst($role->nama) }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <table id="bootstrap-data-table" class="table table-bordered" style="min-width: 1000px;">
                     <thead>
                         <tr style="text-align:center;">
                             <th>No</th>
                             <th>Role</th>
                             <th>Nama</th>
+                            <th>Nama Instansi</th>
+                            <th>Jabatan</th>
                             <th>Kecamatan</th>
-                            <th>Nomor Kontak</th>
                             <th>Username</th>                             
-                            <th colspan="2">Aksi</th>                               
+                            <th>Aksi</th>                               
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($pengguna as $id=>$db)
-                            <tr>
+                            <tr data-role="{{ strtolower($db->role->nama) }}">
                                 <td style="text-align:center;">{{ $id+1 }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ $db->role->nama }}</td>
                                 <td>{{ $db->nama_pengguna }}</td>
-                                <td>{{ $db->no_kontak }}</td>
                                 <td>{{ $db->kecamatan->nama_kecamatan ?? '-' }}</td>
+                                <td>{{ $db->nama_instansi ?? '-' }}</td>
+                                <td>{{ $db->jabatan ?? '-' }}</td>
                                 <td style="text-align:center; vertical-align: middle;">{{ $db->username }}</td>
                                 <td style="text-align:center; vertical-align: middle;">
                                     <div class="d-flex justify-content-center gap-1">
+                                        <button type="button" class="btn btn-info btn-sm rounded" data-toggle="modal" data-target="#modalReview{{ $db->id_pengguna }}">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
                                         <button type="button" class="btn btn-warning btn-sm rounded" data-toggle="modal" data-target="#editModal{{ $db->id_pengguna }}">
                                             <i class="fa fa-edit"></i>
                                         </button>
@@ -217,6 +231,88 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            <!-- Modal Review Pengguna -->
+                            <div class="modal fade" id="modalReview{{ $db->id_pengguna }}" tabindex="-1" aria-labelledby="modalLabel{{ $db->id_pengguna }}" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel{{ $db->id_pengguna }}">Detail Pengguna</h5>
+                                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Tutup"></button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <div class="container">
+
+                                                {{-- Baris 1 --}}
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Nama:</strong>
+                                                            <span>{{ $db->nama_pengguna }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">NIK:</strong>
+                                                            <span>{{ $db->nik }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Nama Instansi:</strong>
+                                                            <span>{{ $db->nama_instansi }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Jabatan:</strong>
+                                                            <span>{{ $db->jabatan }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">No. Kontak:</strong>
+                                                            @if ($db->no_kontak)
+                                                                @php
+                                                                    // Format nomor ke internasional (62)
+                                                                    $noWa = preg_replace('/[^0-9]/', '', $db->no_kontak);
+                                                                    if (substr($noWa, 0, 1) === '0') {
+                                                                        $noWa = '62' . substr($noWa, 1);
+                                                                    }
+                                                                @endphp
+                                                                <a href="https://wa.me/{{ $noWa }}" target="_blank" style="color: #25D366; text-decoration: none;">
+                                                                    {{ $db->no_kontak }}
+                                                                </a>
+                                                            @else
+                                                                <span>-</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Username:</strong>
+                                                            <span>{{ $db->username }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Role:</strong>
+                                                            <span>{{ $db->role->nama }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Kecamatan:</strong>
+                                                            <span>{{ $db->kecamatan->nama_kecamatan ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Email:</strong>
+                                                            <span>{{ $db->email ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <strong class="me-2" style="min-width: 120px;">Auth Type:</strong>
+                                                            <span>{{ $db->auth_type ?? '-' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Modal Edit -->
                             <div class="modal fade" id="editModal{{ $db->id_pengguna }}" tabindex="-1" aria-labelledby="editModalLabel{{ $db->id_pengguna }}" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -303,7 +399,7 @@
                         "ordering": true,     // fitur sorting aktif
                         "order": [],          // default: tidak ada sorting aktif
                         "columnDefs": [
-                            { "orderable": false, "targets": [6] }
+                            { "orderable": false, "targets": [7] }
                         ],
                         "language": {
                             decimal: ",",
@@ -371,6 +467,16 @@
                         // Event saat modal ditampilkan
                         $(modal).on('shown.bs.modal', function () {
                             toggleKecamatanField();
+                        });
+                    });
+                    
+                    document.getElementById('filterRole').addEventListener('change', function () {
+                        const selectedRole = this.value.toLowerCase();
+                        const rows = document.querySelectorAll('#bootstrap-data-table tbody tr');
+
+                        rows.forEach(row => {
+                            const rowRole = row.getAttribute('data-role');
+                            row.style.display = (selectedRole === '' || rowRole === selectedRole) ? '' : 'none';
                         });
                     });
                 });

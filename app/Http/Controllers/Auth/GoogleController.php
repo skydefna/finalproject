@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -12,10 +13,9 @@ class GoogleController
     {
         return Socialite::driver('google')->redirect();
     }
-
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
-         $googleUser = Socialite::driver('google')->stateless()->user();
+        $googleUser = Socialite::driver('google')->stateless()->user();
 
         $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -25,7 +25,10 @@ class GoogleController
                 'nama_pengguna' => $googleUser->getName(),
                 'username' => $googleUser->getEmail(),
                 'email' => $googleUser->getEmail(),
-                'no_kontak' => null,
+                'no_kontak' => $request->input('no_kontak'),
+                'nik' => $request->input('nik'),
+                'nama_instansi' => $request->input('nama_instansi'),
+                'jabatan' => $request->input('jabatan'),
                 'password' => null,
                 'auth_type' => 'google',
             ]);
@@ -37,7 +40,6 @@ class GoogleController
 
         Auth::login($user);
 
-        // Redirect ke buat password jika auth_type google dan belum punya password
         if ($user->password === null) {
             return redirect()->route('password.create');
         }

@@ -78,16 +78,34 @@
                   @csrf
 
                   <div class="form-group mb-3">
-                    <label for="password" class="label">Password</label>
-                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
-                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-					<small class="form-text text-muted">Gunakan kombinasi huruf besar, angka, dan simbol.</small>
+                    <label for="nik" class="label">NIK</label>
+                    <input type="text" name="nik" class="form-control @error('nik') is-invalid @enderror" placeholder="Nomor Induk Kependudukan anda...">
+                    @error('nik')<div class="invalid-feedback">{{ $message }}</div>@enderror
                   </div>
 
                   <div class="form-group mb-3">
-                    <label for="password_confirmation" class="label">Konfirmasi Password</label>
-                    <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Ulangi kata sandi...">
-                    @error('password_confirmation')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <label for="nama_instansi" class="label">Nama Instansi</label>
+                    <input type="text" name="nama_instansi" class="form-control @error('nama_instansi') is-invalid @enderror" placeholder="Misal: Nama Sekolah dan Nama Desa/Kelurahan">
+                    @error('nama_instansi')<div class="invalid-feedback">{{ $message }}</div>@enderror					        
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label for="jabatan" class="label">Jabatan / Profesi</label>
+                    <input type="text" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" placeholder="Staf bagian dinas apa atau profesi sebagai apa?">
+                    @error('jabatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label for="no_kontak" class="label">Nomor Kontak</label>
+                    <input type="text" name="no_kontak" class="form-control @error('no_kontak') is-invalid @enderror" placeholder="Nomor kontak aktif: WhatsApp">
+                    @error('no_kontak')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                  </div>
+
+                  <div class="form-group mb-3">
+                    <label for="password" class="label">Password</label>
+                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
+                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+					          <small class="form-text text-muted">Gunakan kombinasi huruf besar, angka, dan simbol. Misal: Abcd@123</small>
                   </div>
 
                   <div class="form-group mb-4">

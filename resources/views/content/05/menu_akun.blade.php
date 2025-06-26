@@ -86,13 +86,23 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('akun.teknisi') }}" style="display: flex; align-items: center;">
-                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapangan
+                        <a href="{{ route('survei.akun') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Survei
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('aduan.akun') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapor Aduan
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('akun.data_akun') }}" style="display: flex; align-items: center;">
                             <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Akun Pengguna
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('akun.teknisi') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Pemasangan
                         </a>
                     </li>
                 </ul>

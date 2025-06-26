@@ -82,8 +82,18 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('teknisi.survei') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Survei
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('aduan.teknisi') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapor Aduan
+                        </a>
+                    </li>
+                                        <li>
                         <a href="{{ route('teknisi.data') }}" style="display: flex; align-items: center;">
-                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapangan
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Pemasangan
                         </a>
                     </li>
                 </ul>

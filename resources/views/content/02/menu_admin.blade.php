@@ -84,8 +84,13 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('admin.aduan') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapor Aduan
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('admin.teknisi') }}" style="display: flex; align-items: center;">
-                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapangan
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Pemasangan
                         </a>
                     </li>
                 </ul>

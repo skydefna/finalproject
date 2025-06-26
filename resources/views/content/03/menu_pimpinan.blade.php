@@ -14,6 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.dataTables.min.css">
 
     <link rel="stylesheet" href="{{ asset('khusus/css/normalize.css') }}">
     <link rel="stylesheet" href="{{ asset('khusus/css/bootstrap.min.css') }}">
@@ -32,6 +33,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
 
 </head>
 <body>
@@ -82,8 +84,18 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('survei.pimpinan') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Survei
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('aduan.pimpinan') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapor Aduan
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('pimpinan.teknisi') }}" style="display: flex; align-items: center;">
-                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Lapangan
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Pemasangan
                         </a>
                     </li>
                 </ul>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-  	<title>Login</title>
+  	<title>Lain Mata</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -113,6 +113,12 @@
 									@enderror
 								</div>
 
+								<p class="text-center mt-3">
+									<a href="{{ route('password.request', ['login' => old('login')]) }}">
+										Lupa Password?
+									</a>
+								</p>
+
 								<div class="form-group mb-3 text-center">
 									<div class="d-inline-block">
 										{!! NoCaptcha::display() !!}
@@ -127,9 +133,14 @@
 								</div>
 							</form>
 
-							<p class="text-center mt-3">
-								Belum punya akun? <a href="{{ route('daftar.akun') }}">Daftar akun</a>
-							</p>
+							<div class="form-group mb-3 text-center">
+								<p class="text-center mt-3">
+									Belum punya akun? Klik Tombol dibawah ini</a>
+								</p>
+								<a href="{{ url('auth/google') }}" class="btn btn-danger btn-block" style="background-color: #db4437; color: white;">
+									<i class="fa fa-google mr-2"></i> Daftar dengan Google
+								</a>
+							</div>
 						</div> <!-- end form col -->
 
 					</div> <!-- end row -->

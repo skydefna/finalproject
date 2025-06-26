@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Akun;
 
 use App\Models\User;
+use App\Models\Lokasi;
+use App\Models\DataAduan;
+use App\Models\DataSurvei;
 use App\Models\Pengajuan;
 use App\Models\Pemasangan;
+use App\Models\Status;
+use App\Models\StatusAduan;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -180,5 +185,23 @@ class DashboardController extends Controller
         $roles = DB::table('roles')->get();
         $kecamatan = DB::table('kecamatan')->get();
         return view('content.05.data_akun', compact('pengguna', 'roles', 'kecamatan'));
+    }
+    public function aduan()
+    {
+        return view('content.05.data_lapor', [
+            'aduan' => DataAduan::all(),
+            'statusaduan' => StatusAduan::all(),
+            'lokasi' => Lokasi::all(),
+            'pengajuan' => Pengajuan::all(),
+        ]);
+    }
+    public function survei()
+    {
+        return view('content.05.data_survei', [
+            'survei' => DataSurvei::with(['pengajuan', 'status', 'lokasi'])->get(),
+            'status' => Status::all(),
+            'lokasi' => Lokasi::all(),
+            'pengajuanList' => Pengajuan::with(['lokasi', 'status', 'desaKelurahan', 'kecamatan', 'kategori'])->get(),
+        ]);
     }
 }

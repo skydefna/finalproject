@@ -8,7 +8,7 @@
     <div class="col-sm-4">
         <div class="page-header float-left">
             <div class="page-title">
-                <h1>Data Pengajuan</h1>
+                <h1>Data Pengajuan Lain Mata</h1>
             </div>
         </div>
     </div>
@@ -27,16 +27,22 @@
 @section('content')
 <div class="content mt-2">
     <div class="card-body table-responsive">
-        <div class="row mb-2">
-            <div class="col-md-4">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <div class="form-group">
                 <label for="filter-status" class="form-label">Filter Status:</label>
                 <select id="filter-status" class="form-control">
                     <option value="">Semua Status</option>
                     <option value="Diajukan">Diajukan</option>
                     <option value="Disetujui">Disetujui</option>
                     <option value="Ditolak">Ditolak</option>
+                    <!-- tambahkan status lain jika perlu -->
                 </select>
             </div>
+
+            <form action="{{ route('pengajuan.export') }}" method="GET">
+                <input type="hidden" name="status" id="export-status">
+                <button type="submit" class="btn btn-success btn-sm mt-2">Export Excel</button>
+            </form>
         </div>
         <table id="data-pengajuan" class="table table-bordered">
             <thead>
@@ -88,7 +94,7 @@
                         </td>
                         <td style="vertical-align: middle; text-align: center; min-width: 120px;">
                             <span style="display: none;">{{ $db->status_on ? 'On' : 'Off' }}</span>
-                            <form action="{{ route('pengajuan.toggleStatus', $db->id_pengajuan) }}" method="POST">
+                            <form action="{{ route('admin.toggleStatus', $db->id_pengajuan) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
                                 <select name="status_on" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -105,6 +111,9 @@
                             <div style="display: flex; justify-content: center; gap: 5px;">
                                 <button class="btn btn-info rounded btn-sm" data-bs-toggle="modal" data-bs-target="#modalReview{{ $db->id_pengajuan }}">
                                     <i class="fa fa-eye"></i>
+                                </button>
+                                <button class="btn btn-primary rounded btn-sm" data-toggle="modal" data-target="#editModal{{ $db->id_pengajuan }}">
+                                    <i class="fa fa-edit"></i>
                                 </button>
                                 <form action="{{ route('admin.hapus', $db->id_pengajuan) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
                                     @csrf
@@ -170,6 +179,8 @@
 
                 $('#filter-status').on('change', function () {
                     const selected = $(this).val();
+                    $('#export-status').val(selected); // set input hidden untuk form export
+
                     if (selected) {
                         table.column(12).search(selected).draw();
                     } else {
@@ -180,6 +191,235 @@
         </script>
 
         @foreach ($pengajuan as $db)
+            <div class="modal fade" id="editModal{{ $db->id_pengajuan }}" tabindex="-1" aria-labelledby="editModalLabel{{ $db->id_pengajuan }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Pengajuan</h5>
+                            <button type="button" class="btn btn-danger rounded" data-dismiss="modal">X</button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('admin.update', $db->id_pengajuan) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+
+                                <div class="container-fluid">
+                                    <div class="row form-group">
+                                        <label for="pengguna_id" class="col-md-3 text-md-left">Nama Pengguna</label>
+                                        <div class="col col-md-8">
+                                            {{-- Tampilkan nama pengguna (tidak bisa diedit) --}}
+                                            <input type="text" class="form-control" value="{{ $user->username }}" readonly>
+
+                                            {{-- Kirim ID pengguna secara tersembunyi --}}
+                                            <input type="hidden" name="pengguna_id" id="pengguna_id" value="{{ $user->id_pengguna }}">
+
+                                            @error('pengguna_id')
+                                                <div class="invalid-feedback d-block">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                            
+                                    <div class="row form-group">
+                                        <label for="nama_pic_lokasi" class="col-md-3 text-md-left">Nama PIC Lokasi</label>
+                                        <div class="col col-md-8">
+                                            <input name="nama_pic_lokasi" type="text" id="nama_pic_lokasi" class="form-control @error ('nama_pic_lokasi') is-invalid @enderror" 
+                                            value="{{ old('nama_pic_lokasi', $db->nama_pic_lokasi) }}" autofocus placeholder="Nama yang bertanggung jawab">
+                                            @error('nama_pic_lokasi')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label for="pengusul" class="col-md-3 text-md-left">Pengusul</label>
+                                        <div class="col col-md-8">
+                                            <input name="pengusul" type="text" id="pengusul" class="form-control @error ('pengusul') is-invalid @enderror" 
+                                            value="{{ old('pengusul', $db->pengusul) }}" autofocus placeholder="Dinas yang bertanggung jawab">
+                                            @error('pengusul')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row form-group">
+                                        <label for="nama_lokasi" class="col-md-3 text-md-left">Nama Lokasi</label>
+                                        <div class="col col-md-8">
+                                            <input name="nama_lokasi" type="text" id="nama_lokasi" class="form-control @error ('nama_lokasi') is-invalid @enderror" 
+                                            value="{{ old('nama_lokasi', $db->lokasi->first()->nama_lokasi ?? '') }}" autofocus placeholder="Misal: Nama Sekolah, Nama Fasilitas Umum, dan Nama RTH"></div>
+                                            @error('nama_lokasi')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label for="alamat_aktual" class="col-md-3 text-md-left">Alamat Aktual</label>
+                                        <div class="col col-md-8">
+                                            <input name="alamat_aktual" type="text" id="alamat_aktual" class="form-control @error ('alamat_aktual') is-invalid @enderror" 
+                                            value="{{ old('alamat_aktual', $db->alamat_aktual) }}" autofocus placeholder="Alamat lengkap yang diajukan">
+                                            @error('alamat_aktual')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>    
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label class="col-md-3 text-md-left">Koordinat Lokasi</label>
+
+                                        <!-- Latitude dan Tombol di bawahnya -->
+                                        <div class="col-md-4">
+                                            <input type="text" name="latitude" id="latitude" class="form-control @error('latitude') is-invalid @enderror" 
+                                            value="{{ old('latitude', $db->lokasi->first()->latitude ?? '') }}" placeholder="Latitude">
+                                            @error('latitude')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+
+                                            <div class="mt-2">
+                                                <button type="button" class="btn btn-primary btn-sm rounded" onclick="getLocation()">Dapatkan Lokasi Saya</button>
+                                                <small id="demo" class="form-text text-muted mt-1">Pastikan posisi berada di tempat yang diusulkan</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Longitude -->
+                                        <div class="col-md-4">
+                                            <input type="text" name="longitude" id="longitude" class="form-control @error('longitude') is-invalid @enderror" 
+                                            value="{{ old('longitude', $db->lokasi->first()->longitude ?? '') }}" placeholder="Longitude">
+                                            @error('longitude')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        function getLocation() {
+                                            if (navigator.geolocation) {
+                                                navigator.geolocation.getCurrentPosition(
+                                                    function(position) {
+                                                        document.getElementById("latitude").value = position.coords.latitude;
+                                                        document.getElementById("longitude").value = position.coords.longitude;
+                                                        
+                                                        // Notifikasi lokasi berhasil
+                                                        document.getElementById("demo").innerText = "✅ Lokasi berhasil didapatkan.";
+                                                    },
+                                                    function(error) {
+                                                        // Notifikasi lokasi gagal
+                                                        document.getElementById("demo").innerText = "❌ Gagal mendeteksi lokasi. ";
+                                                    }
+                                                );
+                                            } else {
+                                                alert("Browser tidak mendukung Geolocation");
+                                            }
+                                        }
+
+                                        // Ambil lokasi ketika modal ditampilkan (jika ada modal)
+                                        $('#exampleModal').on('shown.bs.modal', function () {
+                                            getLocation();
+                                        });
+                                    </script>
+
+                                    <div class="row form-group">
+                                        <label for="kecamatan_id" class="col-md-3 text-md-left">Pilih Kecamatan</label>
+                                        <div class="col col-md-8">
+                                            <select name="kecamatan_id" id="edit_kecamatan_id" class="form-control @error('kecamatan_id') is-invalid @enderror">
+                                                @foreach ($kecamatan as $kec)
+                                                <option value="{{ $kec->id_kecamatan }}"
+                                                    {{ (old('kecamatan_id') ?? $db->kecamatan_id) == $kec->id_kecamatan ? 'selected' : '' }}>
+                                                    {{ $kec->nama_kecamatan }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            @error('kecamatan_id')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label for="desa_kelurahan_id" class="col-md-3 text-md-left">Pilih Desa/Kelurahan</label>
+                                        <div class="col col-md-8">
+                                            <select name="desa_kelurahan_id" id="edit_desa_kelurahan_id" class="form-control @error('desa_kelurahan_id') is-invalid @enderror">
+                                                @foreach ($desa_kelurahan as $desa)
+                                                    <option value="{{ $desa->id_desa_kelurahan }}"
+                                                        {{ (old('desa_kelurahan_id') ?? $db->desa_kelurahan_id) == $desa->id_desa_kelurahan ? 'selected' : '' }}>
+                                                        {{ $desa->nama_desa_kelurahan }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('desa_kelurahan_id')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label for="kategori_id" class="col-md-3 text-md-left">Kategori Usulan</label>
+                                        <div class="col col-md-8">
+                                            <select name="kategori_id" id="kategori_id" class="form-control @error('kategori_id') is-invalid @enderror">
+                                                @foreach ($kategori_usulan as $kategori)
+                                                    <option value="{{ $kategori->id_kategori }}"
+                                                        {{ (old('kategori_id', $db->kategori_id) == $kategori->id_kategori) ? 'selected' : '' }}>
+                                                        {{ $kategori->nama_kategori }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label for="kontak_pic_lokasi" class="col-md-3 text-md-left">Nomor Kontak</label>
+                                        <div class="col col-md-8">
+                                            <input type="text" name="kontak_pic_lokasi" id="kontak_pic_lokasi" class="form-control @error('kontak_pic_lokasi') is-invalid @enderror" 
+                                            value="{{ old('kontak_pic_lokasi', $db->kontak_pic_lokasi) }}" placeholder="Nomor pengusul yang aktif: WhatsApp">
+                                            @error('kontak_pic_lokasi')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row form-group">
+                                        <label for="tanggal_usul" class="col-md-3 text-md-left">Tanggal Usul</label>
+                                        <div class="col col-md-8">
+                                            <input type="date" name="tanggal_usul" id="tanggal_usul" class="form-control @error('tanggal_usul') is-invalid @enderror" 
+                                            value="{{ old('tanggal_usul', $db->tanggal_usul) }}">
+                                            @error('tanggal_usul')
+                                                <div class="invalid-feedback">
+                                                    {{ $message }}
+                                                </div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary rounded" data-dismiss="modal">Batal</button>
+                                        <button type="submit" class="btn btn-success rounded">Simpan</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="modal fade" id="modalReview{{ $db->id_pengajuan }}" tabindex="-1" aria-labelledby="modalLabel{{ $db->id_pengajuan }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
@@ -230,6 +470,14 @@
                                         <div class="row">
                                             <div class="col-5"><strong>Alamat:</strong></div>
                                             <div class="col-7">{{ $db->alamat_aktual }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-5"><strong>Kontak PIC:</strong></div>
+                                            <div class="col-7">
+                                                <a href="{{ $linkWhatsapp }}" target="_blank" class="text-decoration-none text-success">
+                                                    <i class="fab fa-whatsapp me-1"></i> {{ $db->kontak_pic_lokasi }}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

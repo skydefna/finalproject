@@ -8,7 +8,7 @@
     <div class="col-sm-4">
         <div class="page-header float-left">
             <div class="page-title">
-                <h1>Data Lapangan</h1>
+                <h1>Data Pemasangan Lain Mata</h1>
             </div>
         </div>
     </div>
@@ -285,36 +285,36 @@
                     </div>
                 </div>
             </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    var lokasiData = @json($db->lokasi);
+                    var mapContainerId = "map{{ $db->id_pengajuan }}";
+
+                    if (lokasiData.length > 0 && document.getElementById(mapContainerId)) {
+                        var map = L.map(mapContainerId).setView([lokasiData[0].latitude, lokasiData[0].longitude], 15);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                        }).addTo(map);
+
+                        lokasiData.forEach(function (lokasi) {
+                            L.marker([lokasi.latitude, lokasi.longitude])
+                                .addTo(map)
+                                .bindPopup(lokasi.nama_lokasi);
+                        });
+                    }
+                });
+                function unduhGambar(id) {
+                    const gambar = document.getElementById(id);
+                    const a = document.createElement("a");
+                    a.href = gambar.src;
+                    a.download = "dokumentasi.jpg";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            </script>
             @endforeach
         </div> 
     </div>   
 </div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var lokasiData = @json($db->lokasi);
-        var mapContainerId = "map{{ $db->id_pengajuan }}";
-
-        if (lokasiData.length > 0 && document.getElementById(mapContainerId)) {
-            var map = L.map(mapContainerId).setView([lokasiData[0].latitude, lokasiData[0].longitude], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-            }).addTo(map);
-
-            lokasiData.forEach(function (lokasi) {
-                L.marker([lokasi.latitude, lokasi.longitude])
-                    .addTo(map)
-                    .bindPopup(lokasi.nama_lokasi);
-            });
-        }
-    });
-    function unduhGambar(id) {
-        const gambar = document.getElementById(id);
-        const a = document.createElement("a");
-        a.href = gambar.src;
-        a.download = "dokumentasi.jpg";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
-</script>
 @endsection

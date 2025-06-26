@@ -261,35 +261,51 @@
 
       var markers = [];
 
-      // Tambahkan batas wilayah Kabupaten Tabalong dari GeoJSON
+      // Tampilkan batas wilayah Kabupaten Tabalong
       fetch("/geojson/Tabalong.json")
         .then(response => response.json())
         .then(data => {
+          // Layer Kabupaten
           var tabalongLayer = L.geoJSON(data, {
             filter: function (feature) {
               return feature.properties && feature.properties.NAME_2 === "Tabalong";
             },
-            style: function (feature) {
-              return {
-                color: "#000000",
-                weight: 2,
-                opacity: 0.8,
-                fillOpacity: 0.05,
-                fillColor: "#66b2ff"
-              };
+            style: {
+              color: "#000000",
+              weight: 2,
+              opacity: 0.8,
+              fillOpacity: 0.05,
+              fillColor: "#66b2ff"
             },
             onEachFeature: function (feature, layer) {
-              if (feature.properties && feature.properties.NAME_2) {
-                layer.bindPopup("Wilayah: " + feature.properties.NAME_2);
-              }
+              layer.bindPopup("Kabupaten: " + feature.properties.NAME_2);
             }
           }).addTo(map);
-          
+
+          // Zoom ke Kabupaten Tabalong
           map.fitBounds(tabalongLayer.getBounds());
           originalBounds = tabalongLayer.getBounds();
+
+          // Layer Kecamatan di dalam Tabalong
+          var kecamatanLayer = L.geoJSON(data, {
+            filter: function (feature) {
+              return feature.properties &&
+                    feature.properties.NAME_2 === "Tabalong" &&
+                    feature.properties.NAME_3; // pastikan NAME_3 ada
+            },
+            style: {
+              color: "#000000",
+              weight: 1.5,
+              opacity: 0.7,
+              fillOpacity: 0.1,
+              fillColor: "#ccffcc"
+            },
+            onEachFeature: function (feature, layer) {
+              layer.bindPopup("Kecamatan: " + feature.properties.NAME_3);
+            }
+          }).addTo(map);
         })
         .catch(err => console.error("Gagal memuat GeoJSON Tabalong:", err));
-
       @php $index = 0; @endphp
       @foreach($pengajuan as $db)
         @php
@@ -399,7 +415,7 @@
     </style>
 
     <!-- Contact Section -->
-    <section id="kontak" class="kontact section" style="background-color: #000; color: #fff; padding: 60px 0;">
+    <section id="kontak" class="kontact section" style="background-color: #000; color: #fff; padding: 60px 0; margin-bottom: 30px;">
       <!-- Section Title -->
       <div class="container section-title" data-aos="fade-up">
         <h3 style="color: #fff; text-align: center;">KONTAK KAMI</h3>

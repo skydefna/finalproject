@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Lokasi;
+use App\Models\DataAduan;
 use App\Models\Pengajuan;
 use App\Models\Pemasangan;
+use App\Models\StatusAduan;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -211,7 +214,7 @@ class DashboardController extends Controller
         $kategori_usulan = DB::table('kategori_usulan')->get();
         $lokasi = DB::table('lokasi')->get();
 
-        return view('content.02.data_pengajuan', compact('pengguna','pengajuan', 'kecamatan', 'desa_kelurahan', 'kategori_usulan', 'lokasi'));
+        return view('content.02.data_pengajuan', compact('pengguna','pengajuan', 'kecamatan', 'desa_kelurahan', 'kategori_usulan', 'lokasi', 'user'));
     }
     public function teknisi()
     {
@@ -228,9 +231,21 @@ class DashboardController extends Controller
 
         return view('content.02.data_teknisi', compact('pemasangan'));
     }
-    public function akun(){
-        $pengguna = User::with('role')->get();
-        $roles = DB::table('roles')->get();
-        return view('content.02.data_akun', compact('pengguna', 'roles'));
+    public function aduan()
+    {
+        $user = Auth::user();
+
+        $aduan = DataAduan::with(['pengajuan.kecamatan', 'statusaduan', 'lokasi'])
+            ->whereHas('pengajuan', function ($query) use ($user) {
+                $query->where('kecamatan_id', $user->kecamatan_id);
+            })
+            ->get();
+
+        return view('content.02.data_lapor', [
+            'aduan' => $aduan,
+            'statusaduan' => StatusAduan::all(),
+            'lokasi' => Lokasi::all(),
+            'pengajuan' => Pengajuan::where('kecamatan_id', $user->kecamatan_id)->get(),
+        ]);
     }
 }

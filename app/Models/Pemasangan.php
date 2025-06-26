@@ -13,7 +13,7 @@ class Pemasangan extends Model
 
     protected $primaryKey = 'id_pemasangan';
 
-    protected $fillable = ['pengajuan_id', 'ip_assigment', 'tipe_koneksi', 'tipe_alat', 'tanggal_pemasangan', 'dokumentasi_pemasangan'];
+    protected $fillable = ['pengajuan_id', 'nama_petugas', 'ip_assigment', 'tipe_koneksi', 'tipe_alat', 'tanggal_pemasangan', 'dokumentasi_pemasangan'];
 
     public function pengajuan()
     {

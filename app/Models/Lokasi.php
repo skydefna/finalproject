@@ -24,4 +24,8 @@ class Lokasi extends Model
     {
         return $this->belongsToMany(Pemasangan::class, 'pemasangan_lokasi', 'lokasi_id', 'pemasangan_id', 'id_lokasi', 'id_pemasangan');
     }
+    public function aduan()
+    {
+        return $this->hasMany(DataAduan::class, 'lokasi_id', 'id_lokasi');
+    }
 }

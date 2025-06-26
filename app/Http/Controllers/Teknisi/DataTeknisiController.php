@@ -16,16 +16,6 @@ use Illuminate\Support\Facades\Storage;
 
 class DataTeknisiController
 {
-    public function teknisi()
-    {
-        $pemasangan = Pemasangan::with(['pengajuan', 'provider', 'lokasi'])->get();
-        $pengajuan = Pengajuan::whereHas('status', function ($query) {
-            $query->where('nama_status', 'Disetujui');
-        })->get();
-        $provider = Provider::all();
-        $lokasi = Lokasi::all();
-        return view ('content.04.menu_teknisi', compact('pemasangan', 'pengajuan', 'provider', 'lokasi'));
-    }
     public function getLokasi($id)
     {
         $pengajuan = Pengajuan::with('lokasi', 'status')
@@ -46,6 +36,7 @@ class DataTeknisiController
             'pengajuan_id' => 'required|exists:pengajuan,id_pengajuan',
             'ip_assigment' => 'required|string|min:6|max:16',
             'tipe_alat' => 'required|string|max:100',
+            'nama_petugas' => 'required|string',
             'tanggal_pemasangan' => 'required|date',
             'dokumentasi_pemasangan' => 'required|array|max:5',
             'dokumentasi_pemasangan.*' => 'image|mimes:jpg,jpeg,png|max:20480',
@@ -64,6 +55,7 @@ class DataTeknisiController
         // Simpan ke database
         $pemasangan = Pemasangan::create([
             'pengajuan_id' => $validatedData['pengajuan_id'],
+            'nama_petugas' => $validatedData['nama_petugas'],
             'ip_assigment' => $validatedData['ip_assigment'],            
             'tipe_alat' => $validatedData['tipe_alat'],
             'tanggal_pemasangan' => $validatedData['tanggal_pemasangan'],

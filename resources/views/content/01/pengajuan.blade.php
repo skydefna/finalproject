@@ -462,28 +462,44 @@
             </section>
         </div>
 
-        <section id="kontak" class="kontact section" style="background-color: #000; color: #fff; padding: 60px 0;">
-
-            <!-- Section Title -->
+       <section id="kontak" class="kontact section" style="background-color: #000; color: #fff; padding: 60px 0; margin-bottom: 30px;">
             <div class="container section-title" data-aos="fade-up">
-                <h3 style="color: #fff; text-align: center;">KONTAK ADMIN</h3>
+                <h3 style="text-align: center; color: #fff;">KONTAK ADMIN</h3>
                 <p style="text-align: center;">Jika ada ingin ditanyakan dan masalah pada LAIN MATA, silahkan hubungi nomor dibawah ini:</p>
             </div>
 
             <div class="container" data-aos="fade-up" data-aos-delay="100">
-                <div class="row d-flex flex-wrap justify-content-center" style="gap: 20px;">
-                    @foreach ($adminUsers as $admin)
-                        <div class="col-md-4" style="background-color: #0056b3; padding: 20px; border-radius: 10px;">
-                            <p><strong>{{ $admin->nama_pengguna }}</strong></p>
-                            <p>{{ $admin->no_kontak ?? '-' }}</p>
-                            <p>(Kecamatan: {{ $admin->kecamatan->nama_kecamatan }})</p>
-                        </div>
-                    @endforeach
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle" style="background-color: #ffffff;">
+                        <thead style="background-color: #198754; color: white;">
+                            <tr>
+                                <th>Nama Admin</th>
+                                <th>No. Kontak</th>
+                                <th>Kecamatan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($adminUsers as $admin)
+                                @php
+                                    $no_wa = preg_replace('/[^0-9]/', '', $admin->no_kontak);
+                                    $no_wa = preg_replace('/^0/', '62', $no_wa);
+                                @endphp
+                                <tr>
+                                    <td>{{ $admin->nama_pengguna }}</td>
+                                    <td>
+                                        <a href="https://wa.me/{{ $no_wa }}" target="_blank" style="color: #25D366; text-decoration: none;">
+                                            <i class="fab fa-whatsapp" style="color: #25D366; margin-right: 5px;"></i>
+                                            {{ $admin->no_kontak ?? '-' }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $admin->kecamatan->nama_kecamatan ?? '-' }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
         </section>
-
 
     </main>
 
@@ -557,31 +573,49 @@
 
             var markers = [];
 
+            // Tampilkan batas wilayah Kabupaten Tabalong
             fetch("/geojson/Tabalong.json")
                 .then(response => response.json())
                 .then(data => {
+                // Layer Kabupaten
                 var tabalongLayer = L.geoJSON(data, {
                     filter: function (feature) {
                     return feature.properties && feature.properties.NAME_2 === "Tabalong";
                     },
-                    style: function (feature) {
-                    return {
-                        color: "#000000",
-                        weight: 2,
-                        opacity: 0.8,
-                        fillOpacity: 0.05,
-                        fillColor: "#66b2ff"
-                    };
+                    style: {
+                    color: "#000000",
+                    weight: 2,
+                    opacity: 0.8,
+                    fillOpacity: 0.05,
+                    fillColor: "#66b2ff"
                     },
                     onEachFeature: function (feature, layer) {
-                    if (feature.properties && feature.properties.NAME_2) {
-                        layer.bindPopup("Wilayah: " + feature.properties.NAME_2);
-                    }
+                    layer.bindPopup("Kabupaten: " + feature.properties.NAME_2);
                     }
                 }).addTo(map);
-                
+
+                // Zoom ke Kabupaten Tabalong
                 map.fitBounds(tabalongLayer.getBounds());
                 originalBounds = tabalongLayer.getBounds();
+
+                // Layer Kecamatan di dalam Tabalong
+                var kecamatanLayer = L.geoJSON(data, {
+                    filter: function (feature) {
+                    return feature.properties &&
+                            feature.properties.NAME_2 === "Tabalong" &&
+                            feature.properties.NAME_3; // pastikan NAME_3 ada
+                    },
+                    style: {
+                    color: "#000000",
+                    weight: 1.5,
+                    opacity: 0.7,
+                    fillOpacity: 0.1,
+                    fillColor: "#ccffcc"
+                    },
+                    onEachFeature: function (feature, layer) {
+                    layer.bindPopup("Kecamatan: " + feature.properties.NAME_3);
+                    }
+                }).addTo(map);
                 })
                 .catch(err => console.error("Gagal memuat GeoJSON Tabalong:", err));
 

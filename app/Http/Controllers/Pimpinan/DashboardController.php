@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Pimpinan;
 
 use App\Models\User;
+use App\Models\Lokasi;
+use App\Models\Status;
+use App\Models\DataAduan;
+use App\Models\Kecamatan;
 use App\Models\Pengajuan;
+use App\Models\DataSurvei;
 use App\Models\Pemasangan;
+use App\Models\StatusAduan;
 use Illuminate\Http\Request;
+use App\Models\DesaKelurahan;
+use App\Models\KategoriUsulan;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class DashboardController extends Controller
 {
@@ -192,15 +201,25 @@ class DashboardController extends Controller
         return view('content.03.data_tabel', compact('jumlahPengajuan', 'jumlahDiajukan', 'jumlahDisetujui', 
                     'jumlahDitolak', 'rekapTipeKoneksi', 'rekapPerKecamatan', 'rekapPerDesa', 'rekapStatusAktifPerDesa' ,'totalDesa', 'jumlahDesaDalamRekap',  'totalKecamatan', 'jumlahKecamatanDalamRekap'));
     }
-    public function pengajuan(){
+    public function pengajuan()
+    {
         $pengguna = Auth::user();
         $pengajuan = Pengajuan::with(['pengguna', 'kecamatan', 'desakelurahan', 'kategori', 'lokasi', 'status'])->get();
-        $kecamatan = DB::table('kecamatan')->get();
-        $desa_kelurahan = DB::table('desa_kelurahan')->get();
-        $kategori_usulan = DB::table('kategori_usulan')->get();
-        $lokasi = DB::table('lokasi')->get();
-        $status = DB::table('status')->get();
-        return view('content.03.data_pengajuan', compact('pengguna','pengajuan', 'kecamatan', 'desa_kelurahan', 'kategori_usulan', 'lokasi', 'status'));
+        $kecamatan = Kecamatan::with('desakelurahan')->get();
+        $desa_kelurahan = DesaKelurahan::all();
+        $kategori_usulan = KategoriUsulan::all();
+        $lokasi = Lokasi::all();
+        $status = Status::all();
+
+        return view('content.03.data_pengajuan', compact(
+            'pengguna',
+            'pengajuan',
+            'kecamatan',
+            'desa_kelurahan',
+            'kategori_usulan',
+            'lokasi',
+            'status'
+        ));
     }
     public function teknisi()
     {
@@ -209,5 +228,35 @@ class DashboardController extends Controller
         $provider = DB::table('provider')->get();
         $lokasi = DB::table('lokasi')->get();
         return view('content.03.data_teknisi' , compact('pemasangan', 'pengajuan', 'provider', 'lokasi'));
+    }
+    public function aduan()
+    {
+        return view('content.03.data_lapor', [
+            'aduan' => DataAduan::all(),
+            'statusaduan' => StatusAduan::all(),
+            'lokasi' => Lokasi::all(),
+            'pengajuan' => Pengajuan::all(),
+        ]);
+    }
+    public function survei()
+    {
+        $survei = DataSurvei::whereHas('pengajuan', function ($query) {
+            $query->whereHas('status', function ($q) {
+                $q->where('nama_status', 'Diajukan');
+            });
+        })->with(['pengajuan.status', 'lokasi'])->get();
+
+        return view('content.03.data_survei', [
+            'survei' => DataSurvei::with(['pengajuan.status', 'lokasi'])
+                ->whereHas('pengajuan.status', function ($query) {
+                    $query->where('nama_status', 'Diajukan');
+                })
+                ->get(),
+            'status' => Status::all(),
+            'lokasi' => Lokasi::all(),
+            'pengajuanList' => Pengajuan::with([
+                'lokasi', 'status', 'desaKelurahan', 'kecamatan', 'kategori'
+            ])->get(),
+        ]);
     }
 }
