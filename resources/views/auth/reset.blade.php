@@ -8,6 +8,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('khusus/image/komdigi.png') }}">
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	<link rel="stylesheet" href="{{ asset('login/css/style.css') }}">
 	{!! NoCaptcha::renderJs() !!}
 
@@ -85,12 +86,20 @@
 							<input type="hidden" name="token" value="{{ $token }}">
 							<input type="hidden" name="email" value="{{ $email }}">
 
-							<div class="form-group">
-								<label>Password Baru</label>
-								<input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
+							<div class="form-group mb-3">
+								<label for="password" class="label">Password</label>
+								<div class="input-group">
+									<input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
+									<div class="input-group-append">
+										<button type="button" class="input-group-text" onclick="togglePassword()" style="cursor: pointer;" aria-label="Tampilkan password">
+											<i id="toggleIcon" class="fas fa-eye"></i>
+										</button>
+									</div>
+								</div>
 								@error('password')
-										<div class="invalid-feedback">{{ $message }}</div>
+									<div class="invalid-feedback">{{ $message }}</div>
 								@enderror
+								<small class="form-text text-muted">Gunakan kombinasi huruf besar, angka, dan simbol. Misal: Abcd@123</small>
 							</div>
 
 							<button type="submit" class="btn btn-success mt-2">Ubah Password</button>
@@ -101,6 +110,23 @@
 		</div>
 	</div>
 </section>
+
+<script>
+	function togglePassword() {
+		const passwordInput = document.getElementById("password");
+		const toggleIcon = document.getElementById("toggleIcon");
+
+		if (passwordInput.type === "password") {
+			passwordInput.type = "text";
+			toggleIcon.classList.remove("fa-eye");
+			toggleIcon.classList.add("fa-eye-slash");
+		} else {
+			passwordInput.type = "password";
+			toggleIcon.classList.remove("fa-eye-slash");
+			toggleIcon.classList.add("fa-eye");
+		}
+	}
+</script>
 
 <script src="{{ asset('login/js/jquery.min.js') }}"></script>
 <script src="{{ asset('login/js/popper.js') }}"></script>
