@@ -94,7 +94,7 @@
 								<div class="form-group mb-3">
 									<label for="password" class="label">Kata Sandi</label>
 									<div class="input-group">
-										<input type="password" id="password" name="passworda" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda..." aria-label="Kata sandi">
+										<input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda..." aria-label="Kata sandi">
 										<div class="input-group-append">
 											<button type="button" class="input-group-text" onclick="togglePassword()" style="cursor: pointer;" aria-label="Tampilkan kata sandi">
 												<i id="toggleIcon" class="fas fa-eye"></i>
