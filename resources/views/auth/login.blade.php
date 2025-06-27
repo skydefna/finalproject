@@ -100,10 +100,10 @@
 												<i id="toggleIcon" class="fas fa-eye"></i>
 											</button>
 										</div>
-									</div>
-									@error('password')
+										@error('password')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
+									</div>
 								</div>
 
 								<p class="text-center mt-3">
