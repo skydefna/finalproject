@@ -12,17 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama');
+        Schema::create('status_aduan', function (Blueprint $table) {
+            $table->bigIncrements('id_aduan');
+            $table->string('nama_status_aduan');
             $table->timestamps();
         });
 
-        foreach (['admin', 'tamu', 'pimpzinan', 'teknisi', 'super admin'] as $role) {
-            DB::table('roles')->insert([
-                'nama' => $role,
+        foreach (['Menunggu', 'Diproses', 'Selesai'] as $status) {
+            DB::table('status_aduan')->insert([
+                'nama_status_aduan' => $status,
                 'created_at' => now(),
-                'updated_at' => now(),
+                'updated_at' => now()
             ]);
         }
     }
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('role');
+        Schema::dropIfExists('kategori_aduan');
     }
 };
