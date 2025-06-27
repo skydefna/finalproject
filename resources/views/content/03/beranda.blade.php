@@ -61,7 +61,7 @@
                   </ul>
                 </li>
                 <li><a href="{{ route('pimpinan.pengajuan') }}">Data Pengajuan</a></li>
-                <li><a href="{{ route('survei.pimpinan') }}">Data Pengajuan</a></li>
+                <li><a href="{{ route('survei.pimpinan') }}">Data Survei</a></li>
                 <li><a href="{{ route('aduan.pimpinan') }}">Data Aduan</a></li>
                 <li><a href="{{ route('pimpinan.teknisi') }}">Data Pemasangan</a></li>
               </ul>
