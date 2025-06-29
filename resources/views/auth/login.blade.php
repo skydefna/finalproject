@@ -108,7 +108,7 @@
 
 								<p class="text-center mt-3">
 									<a href="{{ route('password.request', ['login' => old('login')]) }}">
-										Lupa Password?
+										Lupa Kata Sandi?
 									</a>
 								</p>
 
