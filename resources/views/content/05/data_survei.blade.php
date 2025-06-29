@@ -35,7 +35,8 @@
                             <th style="text-align:center; vertical-align: middle;">Kecamatan</th>
                             <th style="text-align:center; vertical-align: middle;">Desa / Kelurahan</th>
                             <th style="text-align:center; vertical-align: middle;">Tanggal Survei</th>
-                            <th style="text-align:center; vertical-align: middle;">Kontak PIC</th>
+                            <th style="text-align:center; vertical-align: middle;">Status</th>
+                            <th class="d-none" style="text-align:center; vertical-align: middle;">Status Value</th>
                             <th>Aksi</th>                                
                         </tr>
                     </thead>
@@ -55,7 +56,18 @@
                                     {{ $db->pengajuan->desakelurahan->nama_desa_kelurahan ?? '-' }}
                                 </td>
                                 <td style="text-align:center; vertical-align: middle;">{{ $db->tanggal_survei }}</td>
-                                <td style="text-align:center; vertical-align: middle;">{{ $db->pengajuan->kontak_pic_lokasi }}</td>
+                                <td class="align-middle text-center">
+                                    @php
+                                        $status = $db->pengajuan?->status->first(); // karena status adalah collection
+                                        $class = match(strtolower($status->nama_status ?? '')) {
+                                            'diajukan' => 'badge bg-warning text-white',
+                                            'disetujui' => 'badge bg-success',
+                                            'ditolak' => 'badge bg-danger',
+                                            default => 'badge bg-secondary',
+                                        };
+                                    @endphp
+                                    <span class="{{ $class }}">{{ $status->nama_status }}</span>
+                                </td>
                                 <td style="text-align:center; vertical-align: middle;">
                                     <div class="d-flex justify-content-center gap-1">
                                         <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalReview{{ $db->id_survei }}">
@@ -73,6 +85,7 @@
                                         </form>
                                     </div>
                                 </td>
+                                <td class="d-none">{{ $statusName ?? '' }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -88,7 +101,7 @@
                             "ordering": true,     // fitur sorting aktif
                             "order": [],          // default: tidak ada sorting aktif
                             "columnDefs": [
-                                { "orderable": false, "targets": [6] } 
+                                { "orderable": false, "targets": [7] } 
                             ],
                             "language": {
                                 decimal: ",",
@@ -147,7 +160,7 @@
                                     <select name="pengajuan_id" id="pengajuan_id" class="form-control" onchange="loadDataPengajuan(this.value)">
                                         <option value="">-- Pilih Pengajuan --</option>
                                         @foreach ($pengajuanList as $pengajuan)
-                                            <option value="{{ $pengajuan->id_pengajuan }}">{{ $pengajuan->nama_pic_lokasi }}</option>
+                                            <option value="{{ $pengajuan->id_pengajuan }}">{{ $pengajuan->nama_pic_lokasi }} - {{ $pengajuan->status->first()?->nama_status ?? '-' }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -425,9 +438,12 @@
                                 </div>
 
                                 <div class="row form-group">
-                                    <label for="foto" class="col-md-3 text-md-left">Upload Foto</label>
+                                    <label for="foto" class="col-md-3 text-md-left">Foto Baru (Opsional)</label>
                                     <div class="col col-md-8">
-                                        <input type="file" name="foto" class="form-control-file" required>
+                                        <input type="file" name="foto" class="form-control-file">
+                                        @if($db->foto)
+                                            <small>Foto saat ini: <a href="{{ asset('storage/' . $db->foto) }}" target="_blank">Lihat</a></small>
+                                        @endif
                                     </div>
                                 </div>
 

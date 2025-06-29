@@ -67,7 +67,7 @@
                                     <option value="">Pilih PIC Pengusul...</option>
                                     @foreach ($pengajuan as $db)
                                         <option value="{{ $db->id_pengajuan }}" {{ old('pengajuan_id') == $db->id_pengajuan ? 'selected' : '' }}>
-                                            {{ $db->nama_pic_lokasi }} - {{ $db->status->first()?->nama_status ?? 'Belum Disetujui' }}
+                                           {{ $db->kecamatan->nama_kecamatan }}  ({{ $db->nama_pic_lokasi }} - {{ $db->status->first()?->nama_status ?? 'Belum Disetujui' }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -516,63 +516,63 @@
                                         </div>
                                     </div>
                                 </div>
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        var lokasiData = @json($db->lokasi);
+                                        var mapContainerId = "map{{ $db->id_pengajuan }}";
+
+                                        if (lokasiData.length > 0 && document.getElementById(mapContainerId)) {
+                                            var map = L.map(mapContainerId).setView([lokasiData[0].latitude, lokasiData[0].longitude], 15);
+                                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                                maxZoom: 19,
+                                            }).addTo(map);
+
+                                            lokasiData.forEach(function (lokasi) {
+                                                L.marker([lokasi.latitude, lokasi.longitude])
+                                                    .addTo(map)
+                                                    .bindPopup(lokasi.nama_lokasi);
+                                            });
+                                        }
+                                    });
+
+                                    function unduhGambar(id) {
+                                        const gambar = document.getElementById(id);
+                                        const a = document.createElement("a");
+                                        a.href = gambar.src;
+                                        a.download = "dokumentasi.jpg";
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        document.body.removeChild(a);
+                                    }
+
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        const input = document.getElementById('dokInput');
+                                        const fileList = document.getElementById('fileList');
+
+                                        input.addEventListener('change', function () {
+                                            const files = Array.from(this.files);
+                                            fileList.innerHTML = '';
+
+                                            if (files.length === 0) {
+                                                fileList.innerHTML = '<span class="text-muted">Belum ada berkas yang dipilih.</span>';
+                                                return;
+                                            }
+
+                                            files.forEach(file => {
+                                                const fileTag = document.createElement('span');
+                                                fileTag.className = 'badge bg-secondary p-2';
+                                                fileTag.textContent = file.name;
+                                                fileList.appendChild(fileTag);
+                                            });
+                                        });
+                                    });
+
+                                </script>
                             @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var lokasiData = @json($db->lokasi);
-                var mapContainerId = "map{{ $db->id_pengajuan }}";
-
-                if (lokasiData.length > 0 && document.getElementById(mapContainerId)) {
-                    var map = L.map(mapContainerId).setView([lokasiData[0].latitude, lokasiData[0].longitude], 15);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        maxZoom: 19,
-                    }).addTo(map);
-
-                    lokasiData.forEach(function (lokasi) {
-                        L.marker([lokasi.latitude, lokasi.longitude])
-                            .addTo(map)
-                            .bindPopup(lokasi.nama_lokasi);
-                    });
-                }
-            });
-
-            function unduhGambar(id) {
-                const gambar = document.getElementById(id);
-                const a = document.createElement("a");
-                a.href = gambar.src;
-                a.download = "dokumentasi.jpg";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const input = document.getElementById('dokInput');
-                const fileList = document.getElementById('fileList');
-
-                input.addEventListener('change', function () {
-                    const files = Array.from(this.files);
-                    fileList.innerHTML = '';
-
-                    if (files.length === 0) {
-                        fileList.innerHTML = '<span class="text-muted">Belum ada berkas yang dipilih.</span>';
-                        return;
-                    }
-
-                    files.forEach(file => {
-                        const fileTag = document.createElement('span');
-                        fileTag.className = 'badge bg-secondary p-2';
-                        fileTag.textContent = file.name;
-                        fileList.appendChild(fileTag);
-                    });
-                });
-            });
-
-            </script>
     @endforeach
 @endsection

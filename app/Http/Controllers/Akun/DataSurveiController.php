@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Akun;
 
+use App\Models\Lokasi;
 use App\Models\Pengajuan;
 use App\Models\DataSurvei;
 use Illuminate\Http\Request;
@@ -31,6 +32,12 @@ class DataSurveiController
             'latitude'    => optional($pengajuan->lokasi->first())->latitude,
             'longitude'   => optional($pengajuan->lokasi->first())->longitude,
         ]);
+    }
+    public function byPengajuan($id)
+    {
+        $pengajuan = Pengajuan::with('lokasi')->find($id);
+
+        return response()->json($pengajuan->lokasi);
     }
     public function create(Request $request)
     {
@@ -76,15 +83,7 @@ class DataSurveiController
             'nama_surveyor' => 'required|string',
             'deskripsi' => 'required|string',
             'tanggal_survei' => 'required|date',
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:20480',
-        ], [
-            'nama_surveyor.required' => 'Nama surveyor wajib diisi.',
-            'deskripsi.required' => 'Deskripsi aduan wajib diisi.',
-            'tanggal_surveu.required' => 'Tanggal survei wajib diisi.',
-            'foto.required' => 'Foto survei wajib diunggah.',
-            'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
-            'foto.max' => 'Ukuran maksimal gambar adalah 20MB.',
+            'foto' => 'image|mimes:jpg,jpeg,png|max:20480',
         ]);
 
         $survei->deskripsi = $request->deskripsi;

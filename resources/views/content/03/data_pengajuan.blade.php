@@ -79,7 +79,7 @@
                                             @if($db->status_on == 1)
                                                 Aktif
                                             @else
-                                                Mati
+                                                Nonaktif
                                             @endif
                                         </td>
                                         <td style="display: none;">

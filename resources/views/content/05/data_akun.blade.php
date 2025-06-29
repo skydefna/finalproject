@@ -64,11 +64,42 @@
                                     @enderror
                                 </div>
                             </div>
+
+                            <div class="row form-group">
+                                <label for="nik" class="col-md-4 text-md-center">NIK</label>
+                                <div class="col col-md-7">
+                                    <input name="nik" type="text" id="nik" class="form-control @error ('nik') is-invalid @enderror" value="{{ old('nik') }}">
+                                    @error('nik')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="row form-group">
                                 <label for="nama_pengguna" class="col-md-4 text-md-center">Nama</label>
                                 <div class="col col-md-7">
                                     <input name="nama_pengguna" type="text" id="nama_pengguna" class="form-control @error ('nama_pengguna') is-invalid @enderror" value="{{ old('nama_pengguna') }}">
                                     @error('nama_pengguna')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <label for="nama_instansi" class="col-md-4 text-md-center">Nama Instansi</label>
+                                <div class="col col-md-7">
+                                    <input name="nama_instansi" type="text" id="nama_instansi" class="form-control @error ('nama_instansi') is-invalid @enderror" value="{{ old('nama_instansi') }}">
+                                    @error('nama_instansi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <label for="jabatan" class="col-md-4 text-md-center">Jabatan / Profesi</label>
+                                <div class="col col-md-7">
+                                    <input name="jabatan" type="text" id="jabatan" class="form-control @error ('jabatan') is-invalid @enderror" value="{{ old('jabatan') }}">
+                                    @error('jabatan')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -94,12 +125,13 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label for="password" class="col-md-4 text-md-center">Password</label>
+                                <label for="password" class="col-md-4 text-md-center">Kata Sandi</label>
                                 <div class="col col-md-7">
-                                    <input name="password" type="text" id="password" class="form-control @error ('password') is-invalid @enderror" value="{{ old('password') }}"></div>
+                                    <input name="password" type="text" id="password" class="form-control @error ('password') is-invalid @enderror" value="{{ old('password') }}">
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -122,8 +154,7 @@
                     const selectedRoleName = selectedOption.dataset.rolename; 
 
                     if (selectedRoleName === 'admin') {
-                        kecamatanWrapper.style.display = 'flex'; 
-                        kecamatanSelect.setAttribute('required', 'required'); 
+                        kecamatanWrapper.style.display = 'flex';  
                     } else {
                         kecamatanWrapper.style.display = 'none'; 
                         kecamatanSelect.removeAttribute('required'); 
@@ -196,9 +227,9 @@
                             <th>No</th>
                             <th>Role</th>
                             <th>Nama</th>
+                            <th>Kecamatan</th>
                             <th>Nama Instansi</th>
                             <th>Jabatan</th>
-                            <th>Kecamatan</th>
                             <th>Username</th>                             
                             <th>Aksi</th>                               
                         </tr>
@@ -355,24 +386,42 @@
                                                 <div class="form-group">
                                                     <label for="nama_pengguna">Nama</label>
                                                     <input type="text" name="nama_pengguna" class="form-control"
-                                                        value="{{ old('nama_pengguna', $db->nama_pengguna) }}" required>
+                                                        value="{{ old('nama_pengguna', $db->nama_pengguna) }}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="nik">NIK</label>
+                                                    <input type="text" name="nik" class="form-control"
+                                                        value="{{ old('nik', $db->nik) }}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="nama_instansi">Nama Instansi</label>
+                                                    <input type="text" name="nama_instansi" class="form-control"
+                                                        value="{{ old('nama_instansi', $db->nama_instansi) }}">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="jabatan">Jabatan / Profesi</label>
+                                                    <input type="text" name="jabatan" class="form-control"
+                                                        value="{{ old('jabatan', $db->jabatan) }}">
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="no_kontak">Nomor Kontak</label>
                                                     <input type="text" name="no_kontak" class="form-control"
-                                                        value="{{ old('no_kontak', $db->no_kontak) }}" required>
+                                                        value="{{ old('no_kontak', $db->no_kontak) }}">
                                                 </div>
 
                                                 <!-- Username -->
                                                 <div class="form-group">
                                                     <label for="username">Username</label>
                                                     <input type="text" name="username" class="form-control"
-                                                        value="{{ old('username', $db->username) }}" required>
+                                                        value="{{ old('username', $db->username) }}">
                                                 </div>
                                                 <!-- Password -->
                                                 <div class="form-group">
-                                                    <label for="password">Password</label>
+                                                    <label for="password">Kata Sandi</label>
                                                     <input type="text" name="password" class="form-control"
                                                         value="{{ old('password') }}">
                                                 </div>

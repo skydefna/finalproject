@@ -64,11 +64,20 @@
           <i class="bi bi-chevron-down toggle-dropdown"></i></a>
           <ul class="dropdown-menu-custom">
             <li><span class="dropdown-item">{{ auth()->user()->nama_pengguna }}</span></li>
+
             <li>
-              <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="dropdown-item text-danger">Keluar</button>
-              </form>
+                <a href="{{ route('tamu.profil') }}" class="dropdown-item">
+                    <i class="bi bi-person-lines-fill me-1"></i> Data Pribadi
+                </a>
+            </li>
+
+            <li>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="dropdown-item text-danger">
+                        <i class="bi bi-box-arrow-right me-1"></i> Keluar
+                    </button>
+                </form>
             </li>
           </ul>
         </div>

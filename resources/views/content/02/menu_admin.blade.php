@@ -89,6 +89,12 @@
                         </a>
                     </li>
                     <li>
+                    <li>
+                        <a href="{{ route('admin.survei') }}" style="display: flex; align-items: center;">
+                            <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Survei
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('admin.teknisi') }}" style="display: flex; align-items: center;">
                             <i class="menu-icon fa fa-pencil-square-o" style="margin-right: 8px;"></i> Data Pemasangan
                         </a>

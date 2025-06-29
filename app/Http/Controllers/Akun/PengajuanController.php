@@ -93,27 +93,6 @@ class PengajuanController
             'tanggal_usul' => 'required|date',
             'latitude' => 'required|string',
             'longitude' => 'required|string',
-        ], [
-            // Pesan khusus
-            'pengguna_id.required' => 'Nama pengguna wajib dipilih.',
-            'pengguna_id.exists' => 'Pengguna yang dipilih tidak ditemukan.',
-            
-            'nama_pic_lokasi.required' => 'Nama PIC lokasi harus diisi.',
-            'pengusul.required' => 'Pengusul harus diisi.',
-            'nama_lokasi.required' => 'Nama lokasi harus diisi.',
-            'alamat_aktual.required' => 'Alamat aktual wajib diisi.',
-            'kecamatan_id.required' => 'Kecamatan harus dipilih.',
-            'kecamatan_id.exists' => 'Kecamatan yang dipilih tidak ditemukan.',
-            'desa_kelurahan_id.required' => 'Desa/Kelurahan harus dipilih.',
-            'desa_kelurahan_id.exists' => 'Desa/Kelurahan yang dipilih tidak ditemukan.',
-            'kontak_pic_lokasi.required' => 'Nomor kontak PIC lokasi wajib diisi.',
-            'kontak_pic_lokasi.max' => 'Nomor kontak maksimal 15 karakter.',
-            'kategori_id.required' => 'Kategori usulan harus dipilih.',
-            'kategori_id.exists' => 'Kategori yang dipilih tidak ditemukan.',
-            'tanggal_usul.required' => 'Tanggal usul wajib diisi.',
-            'tanggal_usul.date' => 'Format tanggal usul tidak valid.',
-            'latitude.required' => 'Latitude lokasi wajib diisi.',
-            'longitude.required' => 'Longitude lokasi wajib diisi.',
         ]);
 
         $pengajuan = Pengajuan::findOrFail($id);

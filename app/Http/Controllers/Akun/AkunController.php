@@ -32,7 +32,10 @@ class AkunController extends Controller
         $rules = [
             'nama_pengguna' => 'required|string|max:100',
             'username' => 'required|string|min:5|max:20|unique:pengguna,username',
-            'no_kontak' => 'nullable|string|max:15',
+            'no_kontak' => 'required|string|max:15',
+            'nik' => 'required|string|max:16',
+            'nama_instansi' => 'required|string',
+            'jabatan' => 'required|string',
             'role_id' => 'required|exists:roles,id',
             'password' => 'required|min:6',
         ];
@@ -44,11 +47,14 @@ class AkunController extends Controller
         }
 
         $request->validate($rules, [
-            'nama_pengguna.required' => 'Nama pengguna wajib dipilih.',
+            'nama_pengguna.required' => 'Nama pengguna wajib diisi.',
+            'nama_instansi.required' => 'Nama instansi wajib diisi.',
+            'jabatan.required' => 'Jabatan wajib diisi.',
             'username.required' => 'Username wajib diisi.',
             'no_kontak.max' => 'Nomor Kontak maksimal 15 huruf.',
+            'nik.required' => 'NIK wajib diisi.',
+            'nik.max' => 'Nomor Kontak maksimal 16 huruf.',
             'role_id.required' => 'Role wajib dipilih.',
-            'kecamatan_id.required' => 'Kecamatan wajib dipilih (khusus untuk Role Admin).',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 6 huruf.',
         ]);
@@ -57,6 +63,9 @@ class AkunController extends Controller
             'role_id' => $request->role_id,
             'nama_pengguna' => $request->nama_pengguna,
             'no_kontak' => $request->no_kontak,
+            'nik' => $request->nik,
+            'nama_instansi' => $request->nama_instansi,
+            'jabatan' => $request->jabatan,
             'username' => $request->username,
             'password' => Hash::make($request->password),
             'kecamatan_id' => $request->kecamatan_id ?? null,
@@ -71,7 +80,10 @@ class AkunController extends Controller
         $rules = [
             'nama_pengguna' => 'required|string|max:100',
             'username' => 'required|string|max:100|unique:pengguna,username,' . $id . ',id_pengguna',
-            'no_kontak' => 'nullable|string|max:15',
+            'nik' => 'required|string|max:16',
+            'nama_instansi' => 'required|string',
+            'jabatan' => 'required|string',
+            'no_kontak' => 'required|string|max:15',
             'role_id' => 'required|exists:roles,id',
             'kecamatan_id' => 'nullable|integer|exists:kecamatan,id_kecamatan',
         ];
@@ -82,6 +94,9 @@ class AkunController extends Controller
             'role_id' => $validatedData['role_id'],
             'nama_pengguna' => $validatedData['nama_pengguna'],
             'username' => $validatedData['username'],
+            'nik' => $validatedData['nik'] ?? null,
+            'nama_instansi' => $validatedData['nama_instansi'] ?? null,
+            'jabatan' => $validatedData['jabatan'] ?? null,
             'no_kontak' => $validatedData['no_kontak'] ?? null,
             'kecamatan_id' => $validatedData['kecamatan_id'] ?? null,
             'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,

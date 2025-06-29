@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Kata Sandi</title>
+    <title>OTP</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -69,60 +69,31 @@
               <!-- Form -->
               <div class="col-md-7 p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                  	<h3 class="mb-0">Daftar Akun Melalui Google</h3>
+                  	<h3 class="mb-0">Verifikasi OTP</h3>
                   	<a href="{{ route('beranda') }}" class="text-warning d-flex align-items-center text-decoration-none">
                       <i class="fa fa-arrow-left me-3"></i> Kembali
                     </a>
                 </div>
 
-                <form method="POST" action="{{ route('password.store') }}" class="signin-form">
-                  @csrf
+                <form method="POST" action="{{ route('otp.verify') }}">
+                    @csrf
+                    <div class="form-group mb-3">
+                        <label class="label">Nomor WhatsApp</label>
+                        <input type="text" class="form-control" value="{{ $otps->phone }}" disabled>
+                        <input type="hidden" name="phone" value="{{ $otps->phone }}">
+                    </div>
 
-                  <div class="form-group mb-3">
-                    <label for="nik" class="label">NIK</label>
-                    <input type="text" name="nik" class="form-control @error('nik') is-invalid @enderror" placeholder="Nomor Induk Kependudukan anda...">
-                    @error('nik')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                  </div>
+                    <div class="form-group mb-3">
+                      <label for="otp" class="label">Kode OTP</label>
+                        <input type="text" name="otp" class="form-control @error('otp') is-invalid @enderror" placeholder="OTP yang dikirim melalui WhatsApp">
+                        @error('otp')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
 
-                  <div class="form-group mb-3">
-                    <label for="nama_instansi" class="label">Nama Instansi</label>
-                    <input type="text" name="nama_instansi" class="form-control @error('nama_instansi') is-invalid @enderror" placeholder="Misal: Nama Sekolah dan Nama Desa/Kelurahan">
-                    @error('nama_instansi')<div class="invalid-feedback">{{ $message }}</div>@enderror					        
-                  </div>
-
-                  <div class="form-group mb-3">
-                    <label for="jabatan" class="label">Jabatan / Profesi</label>
-                    <input type="text" name="jabatan" class="form-control @error('jabatan') is-invalid @enderror" placeholder="Staf bagian dinas apa atau profesi sebagai apa?">
-                    @error('jabatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                  </div>
-
-                  <div class="form-group mb-3">
-                    <label for="no_kontak" class="label">Nomor Kontak</label>
-                    <input type="text" name="no_kontak" class="form-control @error('no_kontak') is-invalid @enderror" placeholder="Nomor kontak aktif: WhatsApp">
-                    @error('no_kontak')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                  </div>
-
-                  <div class="form-group mb-3">
-                      <label for="password" class="label">Password</label>
-                      <div class="input-group">
-                          <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
-                          <div class="input-group-append">
-                              <button type="button" class="input-group-text" onclick="togglePassword()" style="cursor: pointer;" aria-label="Tampilkan password">
-                                  <i id="toggleIcon" class="fas fa-eye"></i>
-                              </button>
-                          </div>
-                      </div>
-                      @error('password')
-                          <div class="invalid-feedback">{{ $message }}</div>
-                      @enderror
-                      <small class="form-text text-muted">Gunakan kombinasi huruf besar, angka, dan simbol. Misal: Abcd@123</small>
-                  </div>
-
-                  <div class="form-group mb-4">
-                    <button type="submit" class="form-control btn btn-primary">Daftar</button>
-                  </div>
+                    <div class="form-group mb-4">
+                      <button type="submit" class="form-control btn btn-primary">Verifikasi</button>
+                    </div>
                 </form>
-              </div> <!-- end form col -->
+            </div>
 
             </div> <!-- end row -->
           </div>

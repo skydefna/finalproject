@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Lokasi;
+use App\Models\Status;
 use App\Models\DataAduan;
 use App\Models\Pengajuan;
+use App\Models\DataSurvei;
 use App\Models\Pemasangan;
 use App\Models\StatusAduan;
 use Illuminate\Http\Request;
@@ -246,6 +248,26 @@ class DashboardController extends Controller
             'statusaduan' => StatusAduan::all(),
             'lokasi' => Lokasi::all(),
             'pengajuan' => Pengajuan::where('kecamatan_id', $user->kecamatan_id)->get(),
+        ]);
+    }
+    public function survei()
+    {
+        $user = Auth::user();
+
+        $survei = DataSurvei::with(['pengajuan.kecamatan', 'pengajuan.status', 'lokasi'])
+            ->whereHas('pengajuan', function ($query) use ($user) {
+                $query->where('kecamatan_id', $user->kecamatan_id);
+            })
+            ->whereHas('pengajuan.status', function ($query) {
+                $query->where('nama_status', 'Disetujui');
+            })
+            ->get(); 
+
+        return view('content.02.data_survei', [
+            'survei'         => $survei,
+            'status'         => Status::all(),
+            'lokasi'         => Lokasi::all(),
+            'pengajuanList'  => Pengajuan::with(['lokasi', 'desaKelurahan', 'kecamatan', 'kategori'])->get(),
         ]);
     }
 }

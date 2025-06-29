@@ -22,8 +22,185 @@
                     </button>
                 </div>
             </div>
-        
-    
+
+            <div class="card-body table-responsive">
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <label for="filter-status" class="form-label">Filter Status:</label>
+                        <select id="filter-status" class="form-control">
+                            <option value="">Semua Status</option>
+                            <option value="Diajukan">Diajukan</option>
+                            <option value="Disetujui">Disetujui</option>
+                            <option value="Ditolak">Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="filter-kecamatan" class="form-label">Filter Kecamatan</label>
+                            <select id="filter-kecamatan" class="form-select">
+                                <option value="">Pilih Kecamatan...</option>
+                                    @foreach ($kecamatan as $kec)
+                                        <option value="{{$kec->id_kecamatan}}">{{$kec->nama_kecamatan}}</option>
+                                    @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive px-3">   
+                    <table id="data-pengajuan" class="table table-bordered w-100">
+                        <thead>
+                            <tr style="text-align:center;">
+                                <th>No</th>
+                                <th>Nama PIC Lokasi</th>
+                                <th>Pengusul</th>
+                                <th>Nama Lokasi</th>
+                                <th>Kecamatan</th>
+                                <th>Desa / Kelurahan</th>
+                                <th>Kontak PIC</th>                          
+                                <th>Status</th>
+                                <th>Status Aktif</th>
+                                <th class="d-none">Status Aktif Value</th>                          
+                                <th>Aksi</th>
+                                <th class="d-none">Status Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pengajuan as $id=>$db)
+                                <tr>
+                                    <td style="vertical-align: middle">{{ $id+1 }}</td>
+                                    <td class="align-middle">{{ $db->nama_pic_lokasi }}</td>
+                                    <td class="align-middle text-center">{{ $db->pengusul }}</td>
+                                    <td style="vertical-align: middle">
+                                        @foreach ($db->lokasi as $lok)
+                                            {{ $lok->nama_lokasi }}<br>
+                                        @endforeach
+                                    </td>
+                                    <td style="vertical-align: middle">{{ $db->kecamatan->nama_kecamatan }}</td>
+                                    <td style="vertical-align: middle">{{ $db->desakelurahan->nama_desa_kelurahan }}</td>
+                                    <td style="vertical-align: middle">{{ $db->kontak_pic_lokasi }}</td>
+                                    <td style="text-align:center; vertical-align: middle;">
+                                        @php
+                                            $latestStatus = $db->status->last();
+                                            $class = match(strtolower($latestStatus->nama_status)) {
+                                                'diajukan' => 'badge bg-warning text-white',
+                                                'disetujui' => 'badge bg-success',
+                                                'ditolak' => 'badge bg-danger',
+                                                default => 'badge bg-secondary',
+                                            };
+                                        @endphp
+
+                                        @if ($latestStatus)
+                                            <span class="{{ $class }}">{{ $latestStatus->nama_status }}</span>
+                                        @endif
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: center; min-width: 120px;">
+                                        <span style="display: none;">{{ $db->status_on ? 'On' : 'Off' }}</span>
+                                        <form action="{{ route('pengajuan.toggleStatus', $db->id_pengajuan) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <select name="status_on" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                <option value="1" {{ $db->status_on ? 'selected' : '' }}>Aktif</option>
+                                                <option value="0" {{ !$db->status_on ? 'selected' : '' }}>Nonaktif</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td style="display: none;">
+                                        {{ $db->status_on }}
+                                    </td>
+                                    <td style="vertical-align: middle; text-align: center;">
+                                        <div style="display: flex; justify-content: center; gap: 5px;">
+                                            <button class="btn btn-info rounded btn-sm" data-bs-toggle="modal" data-bs-target="#modalReview{{ $db->id_pengajuan }}">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-primary rounded btn-sm" data-toggle="modal" data-target="#editModal{{ $db->id_pengajuan }}">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <form action="{{ route('pengajuan.hapus', $db->id_pengajuan) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger rounded btn-sm">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td style="display: none;">
+                                        {{ optional($db->status->last())->nama_status }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+                <script>
+                    $(document).ready(function() {
+                        const table = $('#data-pengajuan').DataTable({
+                            pageLength: 5,
+                            lengthMenu: [ [5, 10, 25, 50, 100], [5, 10, 25, 50, 100] ], 
+                            columnDefs: [
+                                { targets: 7, width: "100px" }, // Status
+                                { targets: 10, width: "30px" },  // Aksi
+                                { targets: 9, visible: false }, // Status Aktif Value
+                                { targets: 11, visible: false }, // Status Value
+                                {
+                                targets: 8, // Status Aktif
+                                searchable: true,
+                                render: function (data, type, row, meta) {
+                                    if (type === 'display') {
+                                        return data; // tampilkan dropdown seperti aslinya
+                                    } else {
+                                        // untuk pencarian/filter, ambil isi dari <span>
+                                        const div = document.createElement("div");
+                                        div.innerHTML = data;
+                                        const hiddenSpan = div.querySelector("span");
+                                        return hiddenSpan ? hiddenSpan.textContent.trim() : '';
+                                    }
+                                }
+                                },
+                                ],
+                                language: {
+                                    emptyTable: "Data Belum Dibuat",
+                                    search: "Cari:",
+                                    lengthMenu: "Tampilkan _MENU_ entri",
+                                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
+                                    zeroRecords: "Tidak ada data ditemukan",
+                                    paginate: {
+                                        first: "Pertama",
+                                        last: "Terakhir",
+                                        next: "Berikutnya",
+                                        previous: "Sebelumnya"
+                                    },
+                                }
+                            });
+
+                        $('#filter-status').on('change', function () {
+                            const selected = $(this).val();
+                            if (selected) {
+                                table.column(11).search(selected).draw();
+                            } else {
+                                table.column(11).search('').draw();
+                            }
+                        });
+
+                        $('#filter-kecamatan').on('change', function () {
+                            const selected = $(this).val();
+                            if (selected) {
+                                const selectedText = $("#filter-kecamatan option:selected").text().trim();
+                                table.column(4).search('^' + selectedText + '$', true, false).draw(); // exact match
+                            } else {
+                                table.column(4).search('').draw(); // reset filter
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+
+        @foreach ($pengajuan as $db)
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">
@@ -234,191 +411,15 @@
             </div>
 
 
-        @if ($errors->any())
-            <script>
-                window.onload = function () {
-                    var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                    modal.show();
-                };
-            </script>
-        @endif
+            @if ($errors->any())
+                <script>
+                    window.onload = function () {
+                        var modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+                        modal.show();
+                    };
+                </script>
+            @endif
 
-        <div class="card-body table-responsive">
-            <div class="row mb-2">
-                <div class="col-md-4">
-                    <label for="filter-status" class="form-label">Filter Status:</label>
-                    <select id="filter-status" class="form-control">
-                        <option value="">Semua Status</option>
-                        <option value="Diajukan">Diajukan</option>
-                        <option value="Disetujui">Disetujui</option>
-                        <option value="Ditolak">Ditolak</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="filter-kecamatan" class="form-label">Filter Kecamatan</label>
-                        <select id="filter-kecamatan" class="form-select">
-                            <option value="">Pilih Kecamatan...</option>
-                                @foreach ($kecamatan as $kec)
-                                    <option value="{{$kec->id_kecamatan}}">{{$kec->nama_kecamatan}}</option>
-                                @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <table id="data-pengajuan" class="table table-bordered">
-                <thead>
-                    <tr style="text-align:center;">
-                        <th>No</th>
-                        <th>Nama PIC Lokasi</th>
-                        <th>Pengusul</th>
-                        <th>Nama Lokasi</th>
-                        <th>Kecamatan</th>
-                        <th>Desa / Kelurahan</th>
-                        <th>Kontak PIC</th>                          
-                        <th>Status</th>
-                        <th>Status Aktif</th>
-                        <th class="d-none">Status Aktif Value</th>                          
-                        <th>Aksi</th>
-                        <th class="d-none">Status Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($pengajuan as $id=>$db)
-                        <tr>
-                            <td style="vertical-align: middle">{{ $id+1 }}</td>
-                            <td class="align-middle">{{ $db->nama_pic_lokasi }}</td>
-                            <td class="align-middle text-center">{{ $db->pengusul }}</td>
-                            <td style="vertical-align: middle">
-                                @foreach ($db->lokasi as $lok)
-                                    {{ $lok->nama_lokasi }}<br>
-                                @endforeach
-                            </td>
-                            <td style="vertical-align: middle">{{ $db->kecamatan->nama_kecamatan }}</td>
-                            <td style="vertical-align: middle">{{ $db->desakelurahan->nama_desa_kelurahan }}</td>
-                            <td style="vertical-align: middle">{{ $db->kontak_pic_lokasi }}</td>
-                            <td style="text-align:center; vertical-align: middle;">
-                                @php
-                                    $latestStatus = $db->status->last();
-                                    $class = match(strtolower($latestStatus->nama_status)) {
-                                        'diajukan' => 'badge bg-warning text-white',
-                                        'disetujui' => 'badge bg-success',
-                                        'ditolak' => 'badge bg-danger',
-                                        default => 'badge bg-secondary',
-                                    };
-                                @endphp
-
-                                @if ($latestStatus)
-                                    <span class="{{ $class }}">{{ $latestStatus->nama_status }}</span>
-                                @endif
-                            </td>
-                            <td style="vertical-align: middle; text-align: center; min-width: 120px;">
-                                <span style="display: none;">{{ $db->status_on ? 'On' : 'Off' }}</span>
-                                <form action="{{ route('pengajuan.toggleStatus', $db->id_pengajuan) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <select name="status_on" class="form-select form-select-sm" onchange="this.form.submit()">
-                                        <option value="1" {{ $db->status_on ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ !$db->status_on ? 'selected' : '' }}>Mati</option>
-                                    </select>
-                                </form>
-                            </td>
-                            <td style="display: none;">
-                                {{ $db->status_on }}
-                            </td>
-                            <td style="vertical-align: middle; text-align: center;">
-                                <div style="display: flex; justify-content: center; gap: 5px;">
-                                    <button class="btn btn-info rounded btn-sm" data-bs-toggle="modal" data-bs-target="#modalReview{{ $db->id_pengajuan }}">
-                                        <i class="fa fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-primary rounded btn-sm" data-toggle="modal" data-target="#editModal{{ $db->id_pengajuan }}">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    <form action="{{ route('pengajuan.hapus', $db->id_pengajuan) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger rounded btn-sm">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                            <td style="display: none;">
-                                {{ optional($db->status->last())->nama_status }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-            <script>
-                $(document).ready(function() {
-                    const table = $('#data-pengajuan').DataTable({
-                        pageLength: 5,
-                        lengthMenu: [ [5, 10, 25, 50, 100], [5, 10, 25, 50, 100] ], 
-                        columnDefs: [
-                            { targets: 7, width: "100px" }, // Status
-                            { targets: 10, width: "30px" },  // Aksi
-                            { targets: 9, visible: false }, // Status Aktif Value
-                            { targets: 11, visible: false }, // Status Value
-                            {
-                            targets: 8, // Status Aktif
-                            searchable: true,
-                            render: function (data, type, row, meta) {
-                                if (type === 'display') {
-                                    return data; // tampilkan dropdown seperti aslinya
-                                } else {
-                                    // untuk pencarian/filter, ambil isi dari <span>
-                                    const div = document.createElement("div");
-                                    div.innerHTML = data;
-                                    const hiddenSpan = div.querySelector("span");
-                                    return hiddenSpan ? hiddenSpan.textContent.trim() : '';
-                                }
-                            }
-                            },
-                            ],
-                            language: {
-                                emptyTable: "Data Belum Dibuat",
-                                search: "Cari:",
-                                lengthMenu: "Tampilkan _MENU_ entri",
-                                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                                zeroRecords: "Tidak ada data ditemukan",
-                                paginate: {
-                                    first: "Pertama",
-                                    last: "Terakhir",
-                                    next: "Berikutnya",
-                                    previous: "Sebelumnya"
-                                },
-                            }
-                        });
-
-                    $('#filter-status').on('change', function () {
-                        const selected = $(this).val();
-                        if (selected) {
-                            table.column(11).search(selected).draw();
-                        } else {
-                            table.column(11).search('').draw();
-                        }
-                    });
-
-                    $('#filter-kecamatan').on('change', function () {
-                        const selected = $(this).val();
-                        if (selected) {
-                            const selectedText = $("#filter-kecamatan option:selected").text().trim();
-                            table.column(4).search('^' + selectedText + '$', true, false).draw(); // exact match
-                        } else {
-                            table.column(4).search('').draw(); // reset filter
-                        }
-                    });
-                });
-            </script>
-        </div>
-    </div>
-
-        @foreach ($pengajuan as $db)
             <div class="modal fade" id="editModal{{ $db->id_pengajuan }}" tabindex="-1" aria-labelledby="editModalLabel{{ $db->id_pengajuan }}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content">

@@ -62,8 +62,8 @@
                 </li>
                 <li><a href="{{ route('teknisi.pengajuan') }}">Data Pengajuan</a></li>
                 <li><a href="{{ route('teknisi.survei') }}">Data Survei</a></li>
-                <li><a href="{{ route('teknisi.pengajuan') }}">Data Aduan</a></li>
-                <li><a href="{{ route('aduan.teknisi') }}">Data Pemasangan</a></li>
+                <li><a href="{{ route('aduan.teknisi') }}">Data Aduan</a></li>
+                <li><a href="{{ route('teknisi.data') }}">Data Pemasangan</a></li>
               </ul>
             </li>
             <li><a href="#kontak">Kontak</a></li>

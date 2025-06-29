@@ -192,7 +192,11 @@ class DashboardController extends Controller
             'aduan' => DataAduan::all(),
             'statusaduan' => StatusAduan::all(),
             'lokasi' => Lokasi::all(),
-            'pengajuan' => Pengajuan::all(),
+            'pengajuan' => Pengajuan::with(['status', 'kecamatan']) // relasi status dan kecamatan
+                ->whereHas('status', function ($q) {
+                    $q->where('nama_status', 'Disetujui');
+                })
+                ->get(),
         ]);
     }
     public function survei()
@@ -201,7 +205,11 @@ class DashboardController extends Controller
             'survei' => DataSurvei::with(['pengajuan', 'status', 'lokasi'])->get(),
             'status' => Status::all(),
             'lokasi' => Lokasi::all(),
-            'pengajuanList' => Pengajuan::with(['lokasi', 'status', 'desaKelurahan', 'kecamatan', 'kategori'])->get(),
+            'pengajuanList' => Pengajuan::with(['lokasi', 'status', 'desaKelurahan', 'kecamatan', 'kategori'])
+                ->whereHas('status', function ($query) {
+                    $query->where('nama_status', 'Diajukan');
+                })
+                ->get(),
         ]);
     }
 }

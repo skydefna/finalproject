@@ -1,32 +1,35 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Akun\DashboardController as AkunDashboardController;
+use App\Models\DataSurvei;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UtamaController;
+use App\Http\Controllers\Auth\OtpController;
 use App\Http\Controllers\Akun\AkunController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DataAduanController;
+use App\Http\Controllers\Akun\DataSurveiController;
+use App\Http\Controllers\Pengguna\ProfilController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Pengguna\PengajuanController;
 use App\Http\Controllers\Admin\DataPengajuanController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Teknisi\DataTeknisiController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\DataAduanController;
+use App\Http\Controllers\Akun\DashboardController as AkunDashboardController;
 use App\Http\Controllers\Akun\DataAduanController as AkunDataAduanController;
-use App\Http\Controllers\Akun\DataSurveiController;
 use App\Http\Controllers\Akun\PengajuanController as AkunPengajuanController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Auth\RegistrasiController as AuthRegistrasiController;
 use App\Http\Controllers\Teknisi\DashboardController as TeknisiDashboardController;
+use App\Http\Controllers\Teknisi\DataAduanController as TeknisiDataAduanController;
 use App\Http\Controllers\Teknisi\PengajuanController as TeknisiPengajuanController;
 use App\Http\Controllers\Pengguna\DashboardController as PenggunaDashboardController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
+use App\Http\Controllers\Pimpinan\DataSurveiController as PimpinanDataSurveiController;
 use App\Http\Controllers\Pimpinan\DataTeknisiController as PimpinanDataTeknisiController;
 use App\Http\Controllers\Pimpinan\DataPengajuanController as PimpinanDataPengajuanController;
-use App\Http\Controllers\Pimpinan\DataSurveiController as PimpinanDataSurveiController;
-use App\Http\Controllers\Teknisi\DataAduanController as TeknisiDataAduanController;
 
 Route::get('/', [UtamaController::class, 'beranda'])->name('beranda');
 
@@ -37,6 +40,10 @@ Route::get('/auth/lupa-password', [ForgotPasswordController::class, 'showLinkReq
 Route::post('/auth/lupa-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
 Route::get('/auth/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+Route::get('/send-otp/{id_pengguna}', [OtpController::class, 'sendOtp'])->name('otp.send');
+Route::get('/verify-otp/{id_pengguna}', [OtpController::class, 'verifyOtpForm'])->name('verify-otp.form');
+Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('otp.verify');
 Route::post('/auth/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
@@ -55,6 +62,8 @@ Route::middleware(['auth'])->post('/logout', [LoginController::class, 'logout'])
 
 Route::middleware(['auth', 'role:tamu'])->group(function () {
     Route::get('/beranda', [PenggunaDashboardController::class,'beranda'])->name('tamu.beranda');
+    Route::get('/profil', [ProfilController::class, 'profil'])->name('tamu.profil');
+    Route::put('/update', [ProfilController::class, 'update'])->name('tamu.profil.update');
     Route::get('/pengajuan', [PenggunaDashboardController::class,'menu'])->name('tamu.pengajuan');
     Route::PUT('/pengajuan/submit', [PengajuanController::class,'submit'])->name('tamu.submit');
     Route::get('/api/desakelurahan', [PengajuanController::class, 'getDesa']);
@@ -73,6 +82,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/data-admin/aduan/hapus/{id}', [DataAduanController::class, 'hapus'])->name('admin.delete');
     Route::get('/pengajuan/export', [DataPengajuanController::class, 'export'])->name('pengajuan.export');
     Route::get('/get-desa/{kecamatan_id}', [DataPengajuanController::class, 'getDesa']);
+    Route::get('/data-survei', [DashboardController::class, 'survei'])->name('admin.survei');
     Route::patch('/pengajuan/{id}/toggle-status', [DataPengajuanController::class, 'toggleStatusAdmin'])->name('admin.toggleStatus');
     Route::get('/data-admin/teknisi', [AdminDashboardController::class,'teknisi'])->name('admin.teknisi');
     Route::POST('/data-admin/{id}/status', [DataPengajuanController::class, 'updateStatus'])->name('admin.updateStatus');
@@ -118,9 +128,10 @@ Route::middleware(['auth', 'role:super admin'])->group(function(){
     Route::patch('/pengajuan/{id}/status', [AkunPengajuanController::class, 'toggleStatus'])->name('pengajuan.toggleStatus');
     Route::get('/survei-menu', [AkunDashboardController::class, 'survei'])->name('survei.akun');
     Route::PUT('/menusubmit-survei', [DataSurveiController::class,'create'])->name('survei.create');
-    Route::PUT('/survei/{id}/edit', [DataSurveiController::class, 'update'])->name('survei.edit');
+    Route::PUT('/survei/{id}/edit', [DataSurveiController::class, 'edit'])->name('survei.edit');
     Route::delete('/survei/hapus/{id}', [DataSurveiController::class,'hapus'])->name('survei.hapus');
     Route::get('/pengajuan/data/{id}', [DataSurveiController::class, 'getData']);
+    Route::get('/lokasi/by-pengajuan/{id}', [DataSurveiController::class, 'byPengajuan']);
     Route::get('/aduan-menu', [AkunDashboardController::class, 'aduan'])->name('aduan.akun');
     Route::get('/getpengajuan/{id}', [AkunDataAduanController::class, 'getPengajuan']);
     Route::PUT('/submit-menu/aduan', [AkunDataAduanController::class,'buat'])->name('aduan.buat');
