@@ -265,7 +265,7 @@
 
                             <!-- Modal Review Pengguna -->
                             <div class="modal fade" id="modalReview{{ $db->id_pengguna }}" tabindex="-1" aria-labelledby="modalLabel{{ $db->id_pengguna }}" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-dialog modal-dialog-centered custom-modal">
                                     <div class="modal-content">
 
                                         <div class="modal-header">

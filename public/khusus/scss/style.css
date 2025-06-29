@@ -47,6 +47,10 @@
       font-size: 10px;
       line-height: 10px; }
 
+.custom-modal {
+  max-width: 60%;
+}
+
 .switch.switch-default {
   position: relative;
   display: inline-block;

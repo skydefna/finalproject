@@ -103,7 +103,7 @@
                   </div>
 
                   <div class="form-group mb-3">
-                      <label for="password" class="label">Password</label>
+                      <label for="password" class="label">Kata Sandi</label>
                       <div class="input-group">
                           <input type="password" id="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Kata sandi anda...">
                           <div class="input-group-append">
