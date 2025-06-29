@@ -72,7 +72,7 @@
 						</div>
 					<div class="col-md-6 p-4">
 						<div class="d-flex justify-content-between align-items-center">
-							<h3 class="mb-4">Lupa Password</h3>
+							<h3 class="mb-4">Lupa Kata Sandi</h3>
 							<a href="{{ route('beranda') }}" class="text-warning d-flex align-items-center text-decoration-none">
 								<i class="fa fa-arrow-left me-3"></i> Kembali
 							</a>
