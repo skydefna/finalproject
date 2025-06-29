@@ -699,6 +699,14 @@
                                             <div class="col-5"><strong>Alamat:</strong></div>
                                             <div class="col-7">{{ $db->alamat_aktual }}</div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-5"><strong>Kontak PIC:</strong></div>
+                                            <div class="col-7">
+                                                <a href="{{ $linkWhatsapp }}" target="_blank" class="text-decoration-none text-success">
+                                                    <i class="fab fa-whatsapp me-1"></i> {{ $db->kontak_pic_lokasi }}
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
