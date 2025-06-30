@@ -94,9 +94,12 @@ class DashboardController
 
         $rekapPerKecamatan = DB::table('pengajuan as p')
             ->join('pengajuan_lokasi as pl', 'p.id_pengajuan', '=', 'pl.pengajuan_id')
+            ->join('pengajuan_status as ps', 'ps.pengajuan_id', '=', 'p.id_pengajuan')
+            ->join('status as s', 's.id_status', '=', 'ps.status_id')
             ->join('lokasi as l', 'pl.lokasi_id', '=', 'l.id_lokasi')
             ->join('kecamatan as k', 'p.kecamatan_id', '=', 'k.id_kecamatan')
             ->select('k.nama_kecamatan', DB::raw('COUNT(DISTINCT l.id_lokasi) as total_wifi'))
+            ->where('s.nama_status', 'Disetujui')
             ->groupBy('k.nama_kecamatan')
             ->get();
 
@@ -106,11 +109,14 @@ class DashboardController
 
         $rekapStatusAktifPerDesa = DB::table('pengajuan as p')
             ->join('desa_kelurahan as d', 'p.desa_kelurahan_id', '=', 'd.id_desa_kelurahan')
+            ->join('pengajuan_status as ps', 'ps.pengajuan_id', '=', 'p.id_pengajuan')
+            ->join('status as s', 's.id_status', '=', 'ps.status_id')
             ->select(
                 'd.nama_desa_kelurahan',
                 DB::raw("CASE WHEN p.status_on = 1 THEN 'Aktif' ELSE 'Mati' END as status"),
                 DB::raw('COUNT(*) as total')
             )
+            ->where('s.nama_status', 'Disetujui')
             ->groupBy('d.nama_desa_kelurahan', 'p.status_on')
             ->orderBy('d.nama_desa_kelurahan')
             ->get();
@@ -124,9 +130,12 @@ class DashboardController
         
         $rekapPerDesa = DB::table('pengajuan as p')
             ->join('pengajuan_lokasi as pl', 'p.id_pengajuan', '=', 'pl.pengajuan_id')
+            ->join('pengajuan_status as ps', 'ps.pengajuan_id', '=', 'p.id_pengajuan')
+            ->join('status as s', 's.id_status', '=', 'ps.status_id')
             ->join('lokasi as l', 'pl.lokasi_id', '=', 'l.id_lokasi')
             ->join('desa_kelurahan as d', 'p.desa_kelurahan_id', '=', 'd.id_desa_kelurahan')
             ->select('d.nama_desa_kelurahan', DB::raw('COUNT(DISTINCT l.id_lokasi) as total_wifi'))
+            ->where('s.nama_status', 'Disetujui')
             ->groupBy('d.nama_desa_kelurahan')
             ->get();
 
@@ -167,9 +176,12 @@ class DashboardController
 
         $rekapPerKecamatan = DB::table('pengajuan as p')
             ->join('pengajuan_lokasi as pl', 'p.id_pengajuan', '=', 'pl.pengajuan_id')
+            ->join('pengajuan_status as ps', 'ps.pengajuan_id', '=', 'p.id_pengajuan')
+            ->join('status as s', 's.id_status', '=', 'ps.status_id')
             ->join('lokasi as l', 'pl.lokasi_id', '=', 'l.id_lokasi')
             ->join('kecamatan as k', 'p.kecamatan_id', '=', 'k.id_kecamatan')
             ->select('k.nama_kecamatan', DB::raw('COUNT(DISTINCT l.id_lokasi) as total_wifi'))
+            ->where('s.nama_status', 'Disetujui')
             ->groupBy('k.nama_kecamatan')
             ->get();
 
@@ -179,11 +191,14 @@ class DashboardController
 
         $rekapStatusAktifPerDesa = DB::table('pengajuan as p')
             ->join('desa_kelurahan as d', 'p.desa_kelurahan_id', '=', 'd.id_desa_kelurahan')
+            ->join('pengajuan_status as ps', 'ps.pengajuan_id', '=', 'p.id_pengajuan')
+            ->join('status as s', 's.id_status', '=', 'ps.status_id')
             ->select(
                 'd.nama_desa_kelurahan',
                 DB::raw("CASE WHEN p.status_on = 1 THEN 'Aktif' ELSE 'Mati' END as status"),
                 DB::raw('COUNT(*) as total')
             )
+            ->where('s.nama_status', 'Disetujui')
             ->groupBy('d.nama_desa_kelurahan', 'p.status_on')
             ->orderBy('d.nama_desa_kelurahan')
             ->get();
@@ -197,9 +212,12 @@ class DashboardController
         
         $rekapPerDesa = DB::table('pengajuan as p')
             ->join('pengajuan_lokasi as pl', 'p.id_pengajuan', '=', 'pl.pengajuan_id')
+            ->join('pengajuan_status as ps', 'ps.pengajuan_id', '=', 'p.id_pengajuan')
+            ->join('status as s', 's.id_status', '=', 'ps.status_id')
             ->join('lokasi as l', 'pl.lokasi_id', '=', 'l.id_lokasi')
             ->join('desa_kelurahan as d', 'p.desa_kelurahan_id', '=', 'd.id_desa_kelurahan')
             ->select('d.nama_desa_kelurahan', DB::raw('COUNT(DISTINCT l.id_lokasi) as total_wifi'))
+            ->where('s.nama_status', 'Disetujui')
             ->groupBy('d.nama_desa_kelurahan')
             ->get();
 
